@@ -1,13 +1,16 @@
-import { LucideIcon } from "lucide-react";
+import * as Icons from "lucide-react";
 
 interface AppIconProps {
-  icon: LucideIcon;
+  iconName: string;
   label: string;
   href: string;
   color?: string;
 }
 
-const AppIcon = ({ icon: Icon, label, href, color = "hsl(var(--primary))" }: AppIconProps) => {
+const AppIcon = ({ iconName, label, href, color = "hsl(var(--primary))" }: AppIconProps) => {
+  const Icon = Icons[iconName as keyof typeof Icons] as React.ComponentType<any>;
+  
+  if (!Icon) return null;
   return (
     <a
       href={href}

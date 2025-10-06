@@ -1,41 +1,10 @@
 import StatusBar from "@/components/StatusBar";
 import AppIcon from "@/components/AppIcon";
-import { Book, Calendar, Users, FileText, Mail } from "lucide-react";
 import backgroundImage from "@/assets/dashboard-background.jpg";
+import { useApps } from "@/hooks/useApps";
 
 const Index = () => {
-  const apps = [
-    { 
-      icon: Book, 
-      label: "Registro", 
-      href: "https://example.com/registro",
-      color: "hsl(0, 85%, 60%)"
-    },
-    { 
-      icon: Calendar, 
-      label: "Orario", 
-      href: "https://example.com/orario",
-      color: "hsl(217, 91%, 60%)"
-    },
-    { 
-      icon: Users, 
-      label: "Classi", 
-      href: "https://example.com/classi",
-      color: "hsl(262, 83%, 58%)"
-    },
-    { 
-      icon: FileText, 
-      label: "Materiali", 
-      href: "https://example.com/materiali",
-      color: "hsl(35, 100%, 55%)"
-    },
-    { 
-      icon: Mail, 
-      label: "Messaggi", 
-      href: "https://example.com/messaggi",
-      color: "hsl(150, 70%, 45%)"
-    },
-  ];
+  const { apps, isLoading } = useApps();
 
   return (
     <div 
@@ -64,20 +33,34 @@ const Index = () => {
         </div>
 
         {/* Apps Grid */}
-        <div className="grid grid-cols-3 md:grid-cols-5 gap-8 md:gap-12 animate-scale-in">
-          {apps.map((app, index) => (
-            <div
-              key={app.label}
-              className="animate-fade-in"
-              style={{
-                animationDelay: `${index * 0.1}s`,
-                animationFillMode: 'both'
-              }}
-            >
-              <AppIcon {...app} />
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="text-foreground/80 text-lg">Caricamento...</div>
+        ) : apps.length === 0 ? (
+          <div className="text-center text-foreground/80">
+            <p className="text-lg mb-2">Nessuna app configurata</p>
+            <p className="text-sm">Clicca sull'icona impostazioni in alto per iniziare</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-8 md:gap-12 animate-scale-in">
+            {apps.map((app, index) => (
+              <div
+                key={app.id}
+                className="animate-fade-in"
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                  animationFillMode: 'both'
+                }}
+              >
+                <AppIcon
+                  iconName={app.icon_name}
+                  label={app.name}
+                  href={app.href}
+                  color={app.color}
+                />
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Page Indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
