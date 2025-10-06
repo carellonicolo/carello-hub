@@ -1,33 +1,10 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import StatusBar from "@/components/StatusBar";
 import AppIcon from "@/components/AppIcon";
 import backgroundImage from "@/assets/dashboard-background.jpg";
 import { useApps } from "@/hooks/useApps";
-import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const { apps, isLoading } = useApps();
-  const { user, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate("/auth");
-    }
-  }, [user, authLoading, navigate]);
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-background">
-        <p className="text-foreground text-lg">Caricamento...</p>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <div 

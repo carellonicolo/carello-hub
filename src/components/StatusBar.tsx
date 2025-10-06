@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { Settings, LogOut } from "lucide-react";
+import { Settings, LogOut, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppManagementSheet } from "./app-management/AppManagementSheet";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const StatusBar = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -44,29 +46,45 @@ const StatusBar = () => {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={() => setSheetOpen(true)}
-            className="text-foreground"
-            title="Impostazioni"
-          >
-            <Settings className="h-6 w-6" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={signOut}
-            className="text-foreground"
-            title="Esci"
-          >
-            <LogOut className="h-6 w-6" />
-          </Button>
+          {user ? (
+            <>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setSheetOpen(true)}
+                className="text-foreground"
+                title="Impostazioni"
+              >
+                <Settings className="h-6 w-6" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={signOut}
+                className="text-foreground"
+                title="Esci"
+              >
+                <LogOut className="h-6 w-6" />
+              </Button>
+            </>
+          ) : null}
           <div className="w-6 h-3 border-2 border-foreground rounded-sm relative">
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-2 bg-foreground rounded-r"></div>
           </div>
         </div>
       </div>
+
+      {!user && (
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => navigate("/auth")}
+          className="fixed bottom-6 right-6 text-foreground/60 hover:text-foreground"
+          title="Login Admin"
+        >
+          <Lock className="h-5 w-5" />
+        </Button>
+      )}
 
       <AppManagementSheet open={sheetOpen} onOpenChange={setSheetOpen} />
     </>
