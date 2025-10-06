@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Settings } from "lucide-react";
+import { Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppManagementSheet } from "./app-management/AppManagementSheet";
+import { useAuth } from "@/hooks/useAuth";
 
 const StatusBar = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const { signOut } = useAuth();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -47,8 +49,18 @@ const StatusBar = () => {
             variant="ghost"
             onClick={() => setSheetOpen(true)}
             className="text-foreground"
+            title="Impostazioni"
           >
             <Settings className="h-6 w-6" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={signOut}
+            className="text-foreground"
+            title="Esci"
+          >
+            <LogOut className="h-6 w-6" />
           </Button>
           <div className="w-6 h-3 border-2 border-foreground rounded-sm relative">
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-2 bg-foreground rounded-r"></div>
