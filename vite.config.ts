@@ -31,6 +31,7 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     rollupOptions: {
       output: {
+        inlineDynamicImports: false,
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
             if (id.includes('@radix-ui')) {
@@ -45,7 +46,14 @@ export default defineConfig(({ mode }) => ({
             return 'vendor';
           }
         },
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+            return 'assets/[name]-[hash][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
+        },
       },
     },
+    assetsInlineLimit: 4096,
   },
 }));
