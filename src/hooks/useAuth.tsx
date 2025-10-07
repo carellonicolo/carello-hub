@@ -33,41 +33,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Setup admin user if doesn't exist
-  useEffect(() => {
-    const setupAdminUser = async () => {
-      try {
-        // Check if admin exists by trying to sign in
-        const { data: existingSession, error: signInError } = await supabase.auth.signInWithPassword({
-          email: ADMIN_EMAIL,
-          password: ADMIN_PASSWORD,
-        });
-
-        if (signInError && signInError.message.includes("Invalid login credentials")) {
-          // Admin doesn't exist, create it
-          const { error: signUpError } = await supabase.auth.signUp({
-            email: ADMIN_EMAIL,
-            password: ADMIN_PASSWORD,
-            options: {
-              emailRedirectTo: `${window.location.origin}/`,
-            },
-          });
-
-          if (signUpError) {
-            console.error("Error creating admin user:", signUpError);
-          }
-        } else if (existingSession) {
-          // Admin exists and we're signed in, sign out for now
-          await supabase.auth.signOut();
-        }
-      } catch (error) {
-        console.error("Setup error:", error);
-      }
-    };
-
-    setupAdminUser();
-  }, []);
-
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -93,28 +58,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (username: string, password: string) => {
     try {
-      // Map username to email
+      // Validate username
       if (username !== ADMIN_USERNAME) {
-        throw new Error("Credenziali non valide");
+        throw new Error("Username non valido");
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
+      // Validate password is not empty
+      if (!password) {
+        throw new Error("La password è obbligatoria");
+      }
+
+      // Attempt sign in
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: ADMIN_EMAIL,
         password: password,
       });
 
       if (error) {
+        console.error("Sign in error:", error);
+        
         if (error.message.includes("Invalid login credentials")) {
-          throw new Error("Credenziali non valide");
+          throw new Error("Password non corretta");
         }
-        throw error;
+        
+        if (error.message.includes("Email not confirmed")) {
+          throw new Error("Email non confermata. Controlla la tua casella di posta.");
+        }
+        
+        throw new Error(error.message || "Errore durante l'accesso");
       }
 
-      toast({ title: "Accesso effettuato con successo" });
+      if (data.session) {
+        console.log("Login successful for user:", data.user?.email);
+        toast({ title: "Accesso effettuato con successo" });
+      }
     } catch (error: any) {
+      console.error("Sign in failed:", error);
       toast({
         title: "Errore di accesso",
-        description: error.message,
+        description: error.message || "Si è verificato un errore durante l'accesso",
         variant: "destructive",
       });
       throw error;
