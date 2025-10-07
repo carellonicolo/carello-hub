@@ -108,7 +108,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
-      navigate("/auth");
       toast({ title: "Disconnesso con successo" });
     } catch (error: any) {
       toast({

@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Home } from "lucide-react";
 import backgroundImage from "@/assets/dashboard-background.jpg";
 
 const Auth = () => {
@@ -51,6 +52,16 @@ const Auth = () => {
       }}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-background/50 to-background/70 backdrop-blur-sm" />
+      
+      <Button
+        variant="ghost"
+        size="icon"
+        className="fixed top-6 left-6 z-20 bg-background/80 backdrop-blur-sm hover:bg-background/90"
+        onClick={() => navigate("/")}
+        title="Torna alla Dashboard"
+      >
+        <Home className="h-5 w-5" />
+      </Button>
 
       <Card className="w-full max-w-md relative z-10 shadow-2xl">
         <CardHeader className="space-y-1">
