@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => ({
       },
     },
     cssMinify: true,
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
@@ -37,6 +38,9 @@ export default defineConfig(({ mode }) => ({
             }
             if (id.includes('react') || id.includes('react-dom')) {
               return 'vendor-react';
+            }
+            if (id.includes('@supabase')) {
+              return 'vendor-supabase';
             }
             return 'vendor';
           }
