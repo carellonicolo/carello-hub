@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import * as Icons from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -9,40 +9,38 @@ interface IconPickerProps {
   onChange: (iconName: string) => void;
 }
 
-const COMMON_ICONS = [
+// Array senza duplicati - ogni icona appare una sola volta
+const COMMON_ICONS = Array.from(new Set([
   // Generale & Navigazione
-  "Book", "Calendar", "Users", "FileText", "Mail", "Home", "Settings",
-  "Search", "Bell", "Heart", "Star", "Download", "Upload", "Trash",
-  "Edit", "Plus", "Minus", "Check", "X", "ChevronRight", "ChevronLeft",
+  "Home", "Search", "Settings", "Download", "Upload", "Edit", 
+  "Plus", "Minus", "Check", "X", "ChevronRight", "ChevronLeft",
   
   // Media & Comunicazione
-  "Play", "Pause", "Volume2", "Camera", "Image", "Video", "Music",
-  "Phone", "MessageCircle", "Send", "Share2", "Link", "ExternalLink",
-  "Mic", "MicOff", "Radio", "Tv", "Film", "Headphones", "Podcast",
+  "Camera", "Image", "Video", "Music", "Phone", "Send", 
+  "Share2", "Link", "ExternalLink", "Mic", "MicOff", "Radio", 
+  "Tv", "Film", "Headphones", "Podcast", "Volume1", "Volume2", "VolumeX",
   
   // Social Media
   "Github", "Twitter", "Linkedin", "Facebook", "Instagram", "Youtube",
-  "Twitch", "MessageSquare", "AtSign", "Hash", "Smile",
+  "Twitch", "MessageSquare", "MessageCircle", "AtSign", "Hash",
   
   // Business & Finance
-  "ShoppingCart", "CreditCard", "DollarSign", "TrendingUp", "BarChart",
-  "PieChart", "Activity", "Target", "Award", "Flag", "Bookmark",
-  "Briefcase", "Package", "Gift", "ShoppingBag", "Store", "Receipt",
-  "Wallet", "Banknote", "Percent", "Calculator", "TrendingDown",
+  "DollarSign", "TrendingUp", "TrendingDown", "BarChart", "PieChart",
+  "Briefcase", "Receipt", "Wallet", "Banknote", "Percent", "Calculator",
   
   // File & Documenti
   "File", "FileText", "FilePlus", "FileMinus", "FileCode", "FileImage",
-  "FileVideo", "FileAudio", "Folder", "FolderOpen", "FolderPlus",
-  "Files", "Copy", "Clipboard", "ClipboardCheck", "ClipboardList",
+  "FileVideo", "FileAudio", "Folder", "FolderOpen", "FolderPlus", "FolderArchive",
+  "Files", "Copy", "Clipboard", "ClipboardCheck", "ClipboardList", "Book", "BookOpen",
   
   // UI & Layout
-  "Tag", "Filter", "Layers", "Grid", "List", "Layout", "Sidebar",
-  "Maximize", "Minimize", "ZoomIn", "ZoomOut", "RotateCw", "RefreshCw",
-  "Move", "Columns", "Rows", "Square", "Circle", "Triangle",
+  "Layers", "Grid", "List", "Layout", "Sidebar", "Maximize", "Minimize", 
+  "ZoomIn", "ZoomOut", "RotateCw", "RefreshCw", "Move", "Columns", "Rows", 
+  "Square", "Circle", "Triangle",
   
   // Sicurezza & Privacy
-  "Lock", "Unlock", "Key", "Shield", "Eye", "EyeOff", "ShieldAlert",
-  "ShieldCheck", "ShieldOff", "Fingerprint", "Scan", "ScanFace",
+  "Lock", "Unlock", "Key", "Shield", "ShieldAlert", "ShieldCheck", "ShieldOff",
+  "Eye", "EyeOff", "Fingerprint", "Scan", "ScanFace",
   
   // Utenti & Profili
   "User", "Users", "UserPlus", "UserMinus", "UserCheck", "UserX",
@@ -50,17 +48,17 @@ const COMMON_ICONS = [
   
   // Archiviazione & Cloud
   "Archive", "Inbox", "Cloud", "CloudDownload", "CloudUpload", 
-  "Server", "Database", "HardDrive", "Save", "FolderArchive",
+  "Server", "Database", "HardDrive", "Save",
   
   // Connettività & Dispositivi
   "Wifi", "WifiOff", "Bluetooth", "Battery", "Power", "Zap",
   "Smartphone", "Tablet", "Laptop", "Monitor", "Watch", "Printer",
-  "Cast", "Usb", "HardDrive", "Cpu", "MemoryStick",
+  "Cast", "Usb", "Cpu", "MemoryStick",
   
   // Meteo & Natura
-  "Sun", "Moon", "CloudRain", "Droplet", "Wind", "CloudSnow",
-  "CloudLightning", "Cloudy", "Sunrise", "Sunset", "Thermometer",
-  "Umbrella", "Leaf", "Trees", "Flower", "Bug", "Bird",
+  "Sun", "Moon", "CloudRain", "CloudSnow", "CloudLightning", "Cloudy",
+  "Sunrise", "Sunset", "Droplet", "Wind", "Thermometer", "Umbrella",
+  "Leaf", "Trees", "Flower", "Bug", "Bird",
   
   // Cibo & Bevande
   "Coffee", "Beer", "Wine", "Pizza", "Apple", "Egg", "IceCream",
@@ -72,52 +70,57 @@ const COMMON_ICONS = [
   "Luggage", "Tent", "Mountain", "Palmtree",
   
   // Educazione & Scienza
-  "BookOpen", "GraduationCap", "School", "Library", "Microscope",
-  "FlaskConical", "Atom", "Dna", "Brain", "Lightbulb", "Beaker",
+  "GraduationCap", "School", "Library", "Microscope", "FlaskConical",
+  "Atom", "Dna", "Brain", "Lightbulb", "Beaker",
   
   // Salute & Medicina
   "Heart", "HeartPulse", "Pill", "Syringe", "Stethoscope",
-  "Hospital", "Ambulance", "Cross", "Activity", "Thermometer",
+  "Hospital", "Ambulance", "Cross", "Activity",
   
   // Sport & Fitness
-  "Dumbbell", "Bike", "Run", "Trophy", "Medal", "Target",
-  "Timer", "Stopwatch", "Flame", "FootballBall", "Crown",
+  "Dumbbell", "Run", "Trophy", "Medal", "Target",
+  "Timer", "Stopwatch", "Flame", "Crown",
   
   // Strumenti & Utensili
   "Wrench", "Hammer", "Scissors", "Ruler", "Pen", "Pencil",
   "PenTool", "Paintbrush", "Palette", "Pipette", "Construction",
   
   // Shopping & E-commerce
-  "ShoppingBag", "ShoppingCart", "Tag", "Tags", "Ticket",
-  "QrCode", "Barcode", "ScanLine", "CreditCard", "BadgePercent",
+  "ShoppingBag", "ShoppingCart", "Tag", "Tags", "Ticket", "Package", "Gift",
+  "Store", "QrCode", "Barcode", "ScanLine", "CreditCard", "BadgePercent",
   
   // Tempo & Calendario
-  "Clock", "Timer", "Alarm", "Calendar", "CalendarDays", "Hourglass",
-  "History", "CalendarCheck", "CalendarX", "CalendarClock",
+  "Clock", "Alarm", "Calendar", "CalendarDays", "CalendarCheck", 
+  "CalendarX", "CalendarClock", "Hourglass", "History",
   
   // Emozioni & Reazioni
-  "Smile", "Frown", "Meh", "Laugh", "Heart", "ThumbsUp",
-  "ThumbsDown", "Star", "Sparkles", "PartyPopper", "Flame",
+  "Smile", "Frown", "Meh", "Laugh", "ThumbsUp", "ThumbsDown", 
+  "Star", "Sparkles", "PartyPopper",
   
   // Azioni & Comandi
   "Play", "Pause", "Stop", "SkipForward", "SkipBack", "FastForward",
-  "Rewind", "Volume1", "Volume2", "VolumeX", "Shuffle", "Repeat",
+  "Rewind", "Shuffle", "Repeat",
   
   // Notifiche & Alert
   "Bell", "BellOff", "BellRing", "AlertCircle", "AlertTriangle",
-  "Info", "HelpCircle", "CheckCircle", "XCircle", "AlertOctagon",
+  "AlertOctagon", "Info", "HelpCircle", "CheckCircle", "XCircle",
   
   // Gaming & Intrattenimento
-  "Gamepad2", "Dices", "Puzzle", "Clapper", "Ticket", "Wand2",
-  "Sparkles", "Ghost", "Rocket", "Zap", "Crown", "Trophy"
-];
+  "Gamepad2", "Dices", "Puzzle", "Clapper", "Wand2", "Ghost", 
+  "Rocket", "Award", "Flag", "Bookmark", "Mail", "Trash", "FootballBall"
+]));
 
 export const IconPicker = ({ value, onChange }: IconPickerProps) => {
   const [search, setSearch] = useState("");
 
-  const filteredIcons = COMMON_ICONS.filter((name) =>
-    name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Memoizza le icone filtrate per ottimizzare le performance
+  const filteredIcons = useMemo(() => {
+    return COMMON_ICONS.filter((name) => {
+      // Verifica che l'icona esista in lucide-react
+      if (!(name in Icons)) return false;
+      return name.toLowerCase().includes(search.toLowerCase());
+    });
+  }, [search]);
 
   return (
     <div className="space-y-3">
