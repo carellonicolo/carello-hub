@@ -79,7 +79,7 @@ const StatusBar = () => {
           size="icon"
           variant="ghost"
           onClick={() => navigate("/auth")}
-          className="fixed bottom-6 right-6 text-foreground/60 hover:text-foreground"
+          className="fixed bottom-6 right-6 z-[100] text-foreground/60 hover:text-foreground cursor-pointer"
           title="Login Admin"
         >
           <Lock className="h-5 w-5" />
