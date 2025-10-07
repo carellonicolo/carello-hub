@@ -16,44 +16,16 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log'],
-      },
-      format: {
-        comments: false,
-      },
-    },
+    minify: true,
     cssMinify: true,
-    cssCodeSplit: true,
+    sourcemap: false,
     rollupOptions: {
       output: {
-        inlineDynamicImports: false,
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('@radix-ui')) {
-              return 'vendor-radix';
-            }
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('@supabase')) {
-              return 'vendor-supabase';
-            }
-            return 'vendor';
-          }
-        },
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name && assetInfo.name.endsWith('.css')) {
-            return 'assets/[name]-[hash][extname]';
-          }
-          return 'assets/[name]-[hash][extname]';
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
         },
       },
     },
-    assetsInlineLimit: 4096,
   },
 }));
