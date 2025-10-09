@@ -27,22 +27,24 @@ const StatusBar = () => {
     });
   };
 
-  const getGreeting = () => {
-    const hour = time.getHours();
-    if (hour < 12) return "Buon mattino";
-    if (hour < 18) return "Buon pomeriggio";
-    return "Buona sera";
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('it-IT', { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
   };
 
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between text-foreground">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-1">
+          <span className="text-lg font-medium opacity-90">
+            {formatDate(time)}
+          </span>
           <span className="text-5xl font-semibold tracking-tight">
             {formatTime(time)}
-          </span>
-          <span className="text-lg font-medium opacity-90 mt-2">
-            {getGreeting()}
           </span>
         </div>
         <div className="flex items-center gap-4">
