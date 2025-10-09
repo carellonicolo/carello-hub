@@ -3,11 +3,13 @@ import { Settings, LogOut, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppManagementSheet } from "./app-management/AppManagementSheet";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useNavigate } from "react-router-dom";
 
 const StatusBar = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { isAdmin, loading: adminLoading } = useIsAdmin();
   const navigate = useNavigate();
   const [time, setTime] = useState(new Date());
 
@@ -50,15 +52,17 @@ const StatusBar = () => {
         <div className="flex items-center gap-4">
           {user ? (
             <>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setSheetOpen(true)}
-                className="text-foreground"
-                title="Impostazioni"
-              >
-                <Settings className="h-6 w-6" />
-              </Button>
+              {!adminLoading && isAdmin && (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setSheetOpen(true)}
+                  className="text-foreground"
+                  title="Impostazioni"
+                >
+                  <Settings className="h-6 w-6" />
+                </Button>
+              )}
               <Button
                 size="icon"
                 variant="ghost"

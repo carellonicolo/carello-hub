@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast";
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  signIn: (username: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   loading: boolean;
 }
@@ -21,11 +21,6 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const useAuth = () => useContext(AuthContext);
-
-// Admin credentials
-const ADMIN_USERNAME = "nicolocarello";
-const ADMIN_EMAIL = "nicolocarello@profcarello.app";
-const ADMIN_PASSWORD = "Niko97ares";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -56,29 +51,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const signIn = async (username: string, password: string) => {
+  const signIn = async (email: string, password: string) => {
     try {
-      // Validate username
-      if (username !== ADMIN_USERNAME) {
-        throw new Error("Username non valido");
+      // Validate email
+      if (!email) {
+        throw new Error("L'email è obbligatoria");
       }
 
-      // Validate password is not empty
+      // Validate password
       if (!password) {
         throw new Error("La password è obbligatoria");
       }
 
       // Attempt sign in
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: ADMIN_EMAIL,
-        password: password,
+        email,
+        password,
       });
 
       if (error) {
-        console.error("Sign in error:", error);
-        
         if (error.message.includes("Invalid login credentials")) {
-          throw new Error("Password non corretta");
+          throw new Error("Credenziali non valide");
         }
         
         if (error.message.includes("Email not confirmed")) {
@@ -89,11 +82,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (data.session) {
-        console.log("Login successful for user:", data.user?.email);
         toast({ title: "Accesso effettuato con successo" });
       }
     } catch (error: any) {
-      console.error("Sign in failed:", error);
       toast({
         title: "Errore di accesso",
         description: error.message || "Si è verificato un errore durante l'accesso",
