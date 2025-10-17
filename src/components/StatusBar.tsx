@@ -5,41 +5,40 @@ import { AppManagementSheet } from "./app-management/AppManagementSheet";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useNavigate } from "react-router-dom";
-
 const StatusBar = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
-  const { user, signOut } = useAuth();
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const {
+    user,
+    signOut
+  } = useAuth();
+  const {
+    isAdmin,
+    loading: adminLoading
+  } = useIsAdmin();
   const navigate = useNavigate();
   const [time, setTime] = useState(new Date());
-
   useEffect(() => {
     const timer = setInterval(() => {
       setTime(new Date());
     }, 1000);
-
     return () => clearInterval(timer);
   }, []);
-
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('it-IT', { 
-      hour: '2-digit', 
+    return date.toLocaleTimeString('it-IT', {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: false 
+      hour12: false
     });
   };
-
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('it-IT', { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric' 
+    return date.toLocaleDateString('it-IT', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
     });
   };
-
-  return (
-    <>
+  return <>
       <div className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between text-foreground">
         <div className="flex flex-col gap-1">
           <span className="text-5xl font-semibold tracking-tight">
@@ -50,51 +49,23 @@ const StatusBar = () => {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          {user ? (
-            <>
-              {!adminLoading && isAdmin && (
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setSheetOpen(true)}
-                  className="text-foreground"
-                  title="Impostazioni"
-                >
+          {user ? <>
+              {!adminLoading && isAdmin && <Button size="icon" variant="ghost" onClick={() => setSheetOpen(true)} className="text-foreground" title="Impostazioni">
                   <Settings className="h-6 w-6" />
-                </Button>
-              )}
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={signOut}
-                className="text-foreground"
-                title="Esci"
-              >
+                </Button>}
+              <Button size="icon" variant="ghost" onClick={signOut} className="text-foreground" title="Esci">
                 <LogOut className="h-6 w-6" />
               </Button>
-            </>
-          ) : null}
-          <div className="w-6 h-3 border-2 border-foreground rounded-sm relative">
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-2 bg-foreground rounded-r"></div>
-          </div>
+            </> : null}
+          
         </div>
       </div>
 
-      {!user && (
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => navigate("/auth")}
-          className="fixed bottom-6 right-6 z-[100] text-foreground/60 hover:text-foreground cursor-pointer"
-          title="Login Admin"
-        >
+      {!user && <Button size="icon" variant="ghost" onClick={() => navigate("/auth")} className="fixed bottom-6 right-6 z-[100] text-foreground/60 hover:text-foreground cursor-pointer" title="Login Admin">
           <Lock className="h-5 w-5" />
-        </Button>
-      )}
+        </Button>}
 
       <AppManagementSheet open={sheetOpen} onOpenChange={setSheetOpen} />
-    </>
-  );
+    </>;
 };
-
 export default StatusBar;
