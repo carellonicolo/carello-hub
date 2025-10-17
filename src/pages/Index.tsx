@@ -34,7 +34,12 @@ const Index = () => {
             <p className="text-lg mb-2">Nessuna app configurata</p>
             <p className="text-sm">Clicca sull'icona impostazioni in alto per iniziare</p>
           </div> : <div className="grid grid-cols-3 md:grid-cols-5 gap-8 md:gap-12 animate-scale-in">
-            {apps.map((app, index) => {})}
+            {apps.map((app, index) => <div key={app.id} className="animate-fade-in" style={{
+          animationDelay: `${index * 0.1}s`,
+          animationFillMode: 'both'
+        }}>
+                <AppIcon iconName={app.icon_name} label={app.name} href={app.href} color={app.color} />
+              </div>)}
           </div>}
 
         {/* Page Indicator */}
