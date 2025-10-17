@@ -42,11 +42,11 @@ const StatusBar = () => {
     <>
       <div className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between text-foreground">
         <div className="flex flex-col gap-1">
-          <span className="text-lg font-medium opacity-90">
-            {formatDate(time)}
-          </span>
           <span className="text-5xl font-semibold tracking-tight">
             {formatTime(time)}
+          </span>
+          <span className="text-base font-medium opacity-90">
+            {formatDate(time)}
           </span>
         </div>
         <div className="flex items-center gap-4">
