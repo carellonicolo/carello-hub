@@ -34,7 +34,7 @@ const AppIcon = ({ iconName, label, href, color = "hsl(var(--primary))" }: AppIc
           }}
         />
       </div>
-      <span className="text-sm font-medium text-foreground drop-shadow-md text-center max-w-[80px] truncate">
+      <span className="text-sm font-medium text-foreground drop-shadow-md text-center max-w-[80px] line-clamp-2">
         {label}
       </span>
     </a>
