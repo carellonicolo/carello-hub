@@ -88,16 +88,16 @@ const Index = () => {
   // Sincronizza localApps con apps quando cambia (ma non durante il drag)
   useEffect(() => {
     if (!activeApp) {
-      setLocalApps(apps);
-    }
-  }, [apps, activeApp]);
+      // Solo sincronizza se l'ordine è effettivamente diverso
+      // Confronta gli ID in ordine per vedere se sono cambiati
+      const localIds = localApps.map(app => app.id).join(',');
+      const serverIds = apps.map(app => app.id).join(',');
 
-  // Inizializza localApps quando apps viene caricato la prima volta
-  useEffect(() => {
-    if (apps.length > 0 && localApps.length === 0) {
-      setLocalApps(apps);
+      if (localIds !== serverIds || localApps.length !== apps.length) {
+        setLocalApps(apps);
+      }
     }
-  }, [apps]);
+  }, [apps, activeApp, localApps]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -130,19 +130,27 @@ const Index = () => {
     }
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
       // localApps ha GIÀ l'ordine corretto grazie a handleDragOver!
       // Non serve ricalcolare con arrayMove, passa direttamente localApps
-      reorderApps(localApps);
+      try {
+        await reorderApps(localApps);  // ✅ ASPETTA che la mutation completi
+        // Solo DOPO che il database è aggiornato, resetta activeApp
+        setActiveApp(null);
+      } catch (error) {
+        console.error("Errore nel riordinare le app:", error);
+        // In caso di errore, ripristina l'ordine originale
+        setLocalApps(apps);
+        setActiveApp(null);
+      }
     } else {
       // Se non c'è stato un drop valido, ripristina l'ordine originale
       setLocalApps(apps);
+      setActiveApp(null);
     }
-
-    setActiveApp(null);
   };
   return <div className="min-h-screen w-full relative overflow-hidden" style={{
     backgroundImage: `url(${backgroundImage})`,

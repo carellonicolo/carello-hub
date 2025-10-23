@@ -86,13 +86,29 @@ export const useApps = () => {
 
   const reorderAppsMutation = useMutation({
     mutationFn: async (reorderedApps: App[]) => {
-      const updates = reorderedApps.map((app, index) => 
-        supabase.from("apps").update({ position: index }).eq("id", app.id)
-      );
+      // Esegui tutti gli update in parallelo e gestisci eventuali errori
+      const updates = reorderedApps.map(async (app, index) => {
+        const { error } = await supabase
+          .from("apps")
+          .update({ position: index })
+          .eq("id", app.id);
+
+        if (error) throw error;
+      });
+
       await Promise.all(updates);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["apps"] });
+    onSuccess: async () => {
+      // ✅ Aspetta che l'invalidazione E il refetch completino
+      await queryClient.invalidateQueries({ queryKey: ["apps"] });
+    },
+    onError: (error) => {
+      console.error("Errore durante il riordinamento:", error);
+      toast({
+        title: "Errore durante il riordinamento",
+        description: "Le modifiche potrebbero non essere state salvate",
+        variant: "destructive"
+      });
     },
   });
 
@@ -102,6 +118,6 @@ export const useApps = () => {
     addApp: addAppMutation.mutate,
     updateApp: updateAppMutation.mutate,
     deleteApp: deleteAppMutation.mutate,
-    reorderApps: reorderAppsMutation.mutate,
+    reorderApps: reorderAppsMutation.mutateAsync,  // ✅ Usa mutateAsync per poter fare await
   };
 };
