@@ -9,8 +9,15 @@
     <link rel="preconnect" href="https://hqrlnfvszuezhcyfiwnx.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://hqrlnfvszuezhcyfiwnx.supabase.co" />
     
-    <!-- Preload critical resources -->
-    <link rel="preload" as="image" href="/assets/dashboard-background-DDWfZYsw.jpg" fetchpriority="high" />
+    <!-- Preload critical resources with optimized priority -->
+    <link rel="preload" as="image" href="/assets/dashboard-background-DDWfZYsw.jpg" fetchpriority="low" />
+    
+    <!-- Optimize font loading to prevent render blocking -->
+    <style>
+      body { font-display: optional; }
+      /* Critical CSS for LCP element to reduce render delay */
+      h1 { font-synthesis: none; text-rendering: optimizeSpeed; }
+    </style>
     
     <title>Prof Carello HUB</title>
     <meta name="description" content="Dashboard personale del Prof. Carello per accesso rapido alle applicazioni didattiche" />
