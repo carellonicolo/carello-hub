@@ -38,12 +38,20 @@ const DraggableAppIcon = ({ app, index }: DraggableAppIconProps) => {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: app.id });
+  } = useSortable({
+    id: app.id,
+    transition: {
+      duration: 200, // Durata transizione in ms (più veloce = più simile a iPhone)
+      easing: 'cubic-bezier(0.25, 1, 0.5, 1)', // Easing fluido
+    },
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
+    transition: transition || 'transform 200ms cubic-bezier(0.25, 1, 0.5, 1)',
+    opacity: isDragging ? 0 : 1, // Elemento originale completamente invisibile quando viene trascinato
+    zIndex: isDragging ? 0 : 1,
+    willChange: 'transform', // Ottimizzazione GPU per animazioni fluide
     animationDelay: `${index * 0.1}s`,
     animationFillMode: 'both' as const,
   };
@@ -52,7 +60,7 @@ const DraggableAppIcon = ({ app, index }: DraggableAppIconProps) => {
     <div
       ref={setNodeRef}
       style={style}
-      className={`animate-fade-in ${isDragging ? 'cursor-grabbing' : 'cursor-grab hover:scale-105 transition-transform'}`}
+      className={`animate-fade-in ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
       {...attributes}
       {...listeners}
     >
