@@ -92,6 +92,13 @@ const Index = () => {
     }
   }, [apps, activeApp]);
 
+  // Inizializza localApps quando apps viene caricato la prima volta
+  useEffect(() => {
+    if (apps.length > 0 && localApps.length === 0) {
+      setLocalApps(apps);
+    }
+  }, [apps]);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -127,10 +134,9 @@ const Index = () => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = apps.findIndex((app) => app.id === active.id);
-      const newIndex = apps.findIndex((app) => app.id === over.id);
-      const reordered = arrayMove(apps, oldIndex, newIndex);
-      reorderApps(reordered);
+      // localApps ha GIÀ l'ordine corretto grazie a handleDragOver!
+      // Non serve ricalcolare con arrayMove, passa direttamente localApps
+      reorderApps(localApps);
     } else {
       // Se non c'è stato un drop valido, ripristina l'ordine originale
       setLocalApps(apps);
