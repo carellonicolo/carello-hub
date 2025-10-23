@@ -3,6 +3,7 @@ import AppIcon from "@/components/AppIcon";
 import backgroundImage from "@/assets/dashboard-background.jpg";
 import { useApps, App } from "@/hooks/useApps";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -11,6 +12,8 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -70,6 +73,7 @@ const Index = () => {
     reorderApps
   } = useApps();
   const { isAdmin } = useIsAdmin();
+  const [activeApp, setActiveApp] = useState<App | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -77,6 +81,14 @@ const Index = () => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const app = apps.find((app) => app.id === active.id);
+    if (app) {
+      setActiveApp(app);
+    }
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -87,6 +99,8 @@ const Index = () => {
       const reordered = arrayMove(apps, oldIndex, newIndex);
       reorderApps(reordered);
     }
+
+    setActiveApp(null);
   };
   return <div className="min-h-screen w-full relative overflow-hidden" style={{
     backgroundImage: `url(${backgroundImage})`,
@@ -118,6 +132,7 @@ const Index = () => {
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
               <SortableContext
@@ -130,6 +145,19 @@ const Index = () => {
                   ))}
                 </div>
               </SortableContext>
+
+              <DragOverlay dropAnimation={null}>
+                {activeApp ? (
+                  <div className="cursor-grabbing scale-110 opacity-90">
+                    <AppIcon
+                      iconName={activeApp.icon_name}
+                      label={activeApp.name}
+                      href={activeApp.href}
+                      color={activeApp.color}
+                    />
+                  </div>
+                ) : null}
+              </DragOverlay>
             </DndContext>
           ) : (
             <div className="grid grid-cols-3 md:grid-cols-5 gap-8 md:gap-12 animate-scale-in">
