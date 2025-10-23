@@ -1310,7 +1310,7 @@ Questo progetto è distribuito sotto licenza MIT. Vedi il file `LICENSE` per i d
 
 <div align="center">
 
-**Realizzato con ❤️ per l'educazione**
+**Realizzato da Prof. Carello. Per altre informazioni contattarlo per email a: info@nicolocarello.it*
 
 [⬆ Torna su](#prof-carello-app-hub)
 
