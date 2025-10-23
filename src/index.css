@@ -85,4 +85,12 @@ All colors MUST be HSL.
     content-visibility: auto;
     contain-intrinsic-size: auto 144px;
   }
+
+  /* Disabilita ottimizzazioni problematiche su mobile */
+  @media (max-width: 767px) {
+    h1 {
+      content-visibility: visible;
+      contain-intrinsic-size: auto;
+    }
+  }
 }

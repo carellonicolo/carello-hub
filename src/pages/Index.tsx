@@ -151,11 +151,11 @@ const Index = () => {
       
       <main className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 pb-20">
         {/* Title Section */}
-        <div className="text-center mb-16 animate-fade-in">
-          <h1 className="text-7xl font-bold tracking-tight text-foreground drop-shadow-2xl mb-2">
+        <div className="text-center mb-16 animate-fade-in mt-20 md:mt-0">
+          <h1 className="text-4xl md:text-7xl font-bold tracking-tight text-foreground drop-shadow-2xl mb-2">
             Prof. Carello
           </h1>
-          <p className="text-2xl font-semibold text-foreground/90 drop-shadow-lg">
+          <p className="text-xl md:text-2xl font-semibold text-foreground/90 drop-shadow-lg">
             APP
           </p>
         </div>
@@ -176,7 +176,7 @@ const Index = () => {
                 items={localApps.map((app) => app.id)}
                 strategy={rectSortingStrategy}
               >
-                <div className="grid grid-cols-3 md:grid-cols-5 gap-8 md:gap-12 animate-scale-in">
+                <div className="grid grid-cols-3 md:grid-cols-5 gap-6 md:gap-8 lg:gap-12 animate-scale-in">
                   {localApps.map((app, index) => (
                     <DraggableAppIcon key={app.id} app={app} index={index} />
                   ))}
@@ -197,7 +197,7 @@ const Index = () => {
               </DragOverlay>
             </DndContext>
           ) : (
-            <div className="grid grid-cols-3 md:grid-cols-5 gap-8 md:gap-12 animate-scale-in">
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-6 md:gap-8 lg:gap-12 animate-scale-in">
               {apps.map((app, index) => (
                 <div key={app.id} className="animate-fade-in" style={{
                   animationDelay: `${index * 0.1}s`,
