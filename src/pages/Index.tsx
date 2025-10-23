@@ -3,7 +3,7 @@ import AppIcon from "@/components/AppIcon";
 import backgroundImage from "@/assets/dashboard-background.jpg";
 import { useApps, App } from "@/hooks/useApps";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -13,6 +13,7 @@ import {
   useSensors,
   DragEndEvent,
   DragStartEvent,
+  DragOverEvent,
   DragOverlay,
 } from "@dnd-kit/core";
 import {
@@ -82,9 +83,21 @@ const Index = () => {
   } = useApps();
   const { isAdmin } = useIsAdmin();
   const [activeApp, setActiveApp] = useState<App | null>(null);
+  const [localApps, setLocalApps] = useState<App[]>(apps);
+
+  // Sincronizza localApps con apps quando cambia (ma non durante il drag)
+  useEffect(() => {
+    if (!activeApp) {
+      setLocalApps(apps);
+    }
+  }, [apps, activeApp]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Piccolo movimento necessario per iniziare il drag
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -98,6 +111,18 @@ const Index = () => {
     }
   };
 
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setLocalApps((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -106,6 +131,9 @@ const Index = () => {
       const newIndex = apps.findIndex((app) => app.id === over.id);
       const reordered = arrayMove(apps, oldIndex, newIndex);
       reorderApps(reordered);
+    } else {
+      // Se non c'è stato un drop valido, ripristina l'ordine originale
+      setLocalApps(apps);
     }
 
     setActiveApp(null);
@@ -141,14 +169,15 @@ const Index = () => {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={apps.map((app) => app.id)}
+                items={localApps.map((app) => app.id)}
                 strategy={rectSortingStrategy}
               >
                 <div className="grid grid-cols-3 md:grid-cols-5 gap-8 md:gap-12 animate-scale-in">
-                  {apps.map((app, index) => (
+                  {localApps.map((app, index) => (
                     <DraggableAppIcon key={app.id} app={app} index={index} />
                   ))}
                 </div>
