@@ -98,15 +98,31 @@ export const useApps = () => {
 
       await Promise.all(updates);
     },
-    onSuccess: async () => {
-      // ✅ Aspetta che l'invalidazione E il refetch completino
-      await queryClient.invalidateQueries({ queryKey: ["apps"] });
+    onMutate: async (reorderedApps) => {
+      // ✅ OPTIMISTIC UPDATE: Aggiorna la cache PRIMA che il database risponda
+      await queryClient.cancelQueries({ queryKey: ["apps"] });
+
+      // Salva lo snapshot precedente per rollback
+      const previousApps = queryClient.getQueryData<App[]>(["apps"]);
+
+      // Aggiorna la cache con il nuovo ordine
+      queryClient.setQueryData<App[]>(["apps"], reorderedApps);
+
+      return { previousApps };
     },
-    onError: (error) => {
+    onSuccess: async () => {
+      // ✅ refetchQueries per sincronizzare con il database
+      await queryClient.refetchQueries({ queryKey: ["apps"] });
+    },
+    onError: (error, _, context) => {
+      // ❌ Rollback in caso di errore
+      if (context?.previousApps) {
+        queryClient.setQueryData(["apps"], context.previousApps);
+      }
       console.error("Errore durante il riordinamento:", error);
       toast({
         title: "Errore durante il riordinamento",
-        description: "Le modifiche potrebbero non essere state salvate",
+        description: "Le modifiche non sono state salvate",
         variant: "destructive"
       });
     },
