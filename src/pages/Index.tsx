@@ -41,12 +41,6 @@ const Index = () => {
                 <AppIcon iconName={app.icon_name} label={app.name} href={app.href} color={app.color} />
               </div>)}
           </div>}
-
-        {/* Page Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-          <div className="w-2 h-2 rounded-full bg-foreground/80" />
-          
-        </div>
       </main>
     </div>;
 };
