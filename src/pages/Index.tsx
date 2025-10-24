@@ -7,6 +7,8 @@ import { useState, useEffect, useRef } from "react";
 import {
   DndContext,
   closestCenter,
+  pointerWithin,
+  MeasuringStrategy,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -42,17 +44,17 @@ const DraggableAppIcon = ({ app, index }: DraggableAppIconProps) => {
   } = useSortable({
     id: app.id,
     transition: {
-      duration: 200, // Durata transizione in ms (più veloce = più simile a iPhone)
-      easing: 'cubic-bezier(0.25, 1, 0.5, 1)', // Easing fluido
+      duration: 350,
+      easing: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
     },
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: transition || 'transform 200ms cubic-bezier(0.25, 1, 0.5, 1)',
-    opacity: isDragging ? 0 : 1, // Elemento originale completamente invisibile quando viene trascinato
+    transition: transition || 'transform 350ms cubic-bezier(0.25, 0.8, 0.25, 1)',
+    opacity: isDragging ? 0 : 1,
     zIndex: isDragging ? 0 : 1,
-    willChange: 'transform', // Ottimizzazione GPU per animazioni fluide
+    willChange: 'transform',
     animationDelay: `${index * 0.1}s`,
     animationFillMode: 'both' as const,
   };
@@ -84,8 +86,9 @@ const Index = () => {
   const { isAdmin } = useIsAdmin();
   const [activeApp, setActiveApp] = useState<App | null>(null);
   const [localApps, setLocalApps] = useState<App[]>(apps);
-  const [isMutating, setIsMutating] = useState(false);  // 🆕 Traccia se stiamo salvando
-  const isProcessingDrag = useRef(false);  // 🛡️ Previene chiamate multiple
+  const [isMutating, setIsMutating] = useState(false);
+  const isProcessingDrag = useRef(false);
+  const dragOverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sincronizza localApps con apps quando cambia (ma non durante il drag o il salvataggio)
   useEffect(() => {
@@ -125,11 +128,17 @@ const Index = () => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      setLocalApps((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
+      if (dragOverTimeoutRef.current) {
+        clearTimeout(dragOverTimeoutRef.current);
+      }
+      
+      dragOverTimeoutRef.current = setTimeout(() => {
+        setLocalApps((items) => {
+          const oldIndex = items.findIndex((item) => item.id === active.id);
+          const newIndex = items.findIndex((item) => item.id === over.id);
+          return arrayMove(items, oldIndex, newIndex);
+        });
+      }, 16);
     }
   };
 
@@ -184,6 +193,14 @@ const Index = () => {
       setActiveApp(null);
     }
   };
+
+  const measuringConfig = {
+    droppable: {
+      strategy: MeasuringStrategy.Always,
+      frequency: 100,
+    },
+  };
+
   return <div className="min-h-screen w-full relative overflow-hidden" style={{
     backgroundImage: `url(${backgroundImage})`,
     backgroundSize: 'cover',
@@ -213,7 +230,8 @@ const Index = () => {
           </div> : isAdmin ? (
             <DndContext
               sensors={sensors}
-              collisionDetection={closestCenter}
+              collisionDetection={pointerWithin}
+              measuring={measuringConfig}
               onDragStart={handleDragStart}
               onDragOver={handleDragOver}
               onDragEnd={handleDragEnd}
@@ -231,7 +249,13 @@ const Index = () => {
 
               <DragOverlay dropAnimation={null}>
                 {activeApp ? (
-                  <div className="cursor-grabbing scale-110 opacity-90">
+                  <div 
+                    className="cursor-grabbing opacity-90"
+                    style={{
+                      transform: 'scale(1.05) rotate(3deg)',
+                      transition: 'transform 200ms ease-out',
+                    }}
+                  >
                     <AppIcon
                       iconName={activeApp.icon_name}
                       label={activeApp.name}
