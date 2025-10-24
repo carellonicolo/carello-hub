@@ -136,13 +136,21 @@ const Index = () => {
     const { active, over } = event;
     console.log('🎯 DragEnd - active:', active.id, 'over:', over?.id);
 
-    if (over && active.id !== over.id) {
-      console.log('📦 Ordine locale prima del save:', localApps.map(a => `${a.name}(${a.position})`));
-      console.log('📦 Tipo di reorderApps:', typeof reorderApps);
+    // ✅ CONTROLLO CORRETTO: Verifica se l'ordine è cambiato
+    const hasOrderChanged = localApps.some((app, index) => {
+      const originalApp = apps[index];
+      return !originalApp || app.id !== originalApp.id;
+    });
+
+    console.log('🔍 Ordine cambiato?', hasOrderChanged);
+    console.log('📦 Ordine locale:', localApps.map(a => a.name));
+    console.log('📦 Ordine server:', apps.map(a => a.name));
+
+    if (hasOrderChanged && over) {
+      console.log('💾 Salvo il nuovo ordine...');
       
       try {
         setIsMutating(true);
-        console.log('🚀 Chiamando reorderApps...');
         await reorderApps(localApps);
         console.log('✅ Mutation completata con successo');
         
@@ -153,13 +161,13 @@ const Index = () => {
         }, 100);
       } catch (error) {
         console.error("❌ Errore nel riordinare le app:", error);
-        setLocalApps(apps);
+        setLocalApps(apps); // Rollback solo in caso di errore
         setActiveApp(null);
         setIsMutating(false);
       }
     } else {
-      console.log('⚠️ Drop non valido, ripristino ordine originale');
-      setLocalApps(apps);
+      // Nessun cambio di ordine, semplicemente resetta lo stato
+      console.log('⚪ Nessun cambio, reset dello stato');
       setActiveApp(null);
     }
   };
