@@ -3,7 +3,7 @@ import AppIcon from "@/components/AppIcon";
 import backgroundImage from "@/assets/dashboard-background.jpg";
 import { useApps, App } from "@/hooks/useApps";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   DndContext,
   closestCenter,
@@ -85,6 +85,7 @@ const Index = () => {
   const [activeApp, setActiveApp] = useState<App | null>(null);
   const [localApps, setLocalApps] = useState<App[]>(apps);
   const [isMutating, setIsMutating] = useState(false);  // 🆕 Traccia se stiamo salvando
+  const isProcessingDrag = useRef(false);  // 🛡️ Previene chiamate multiple
 
   // Sincronizza localApps con apps quando cambia (ma non durante il drag o il salvataggio)
   useEffect(() => {
@@ -134,6 +135,13 @@ const Index = () => {
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
+    
+    // 🛡️ PROTEZIONE: Se stiamo già processando un drag, ignora questa chiamata
+    if (isProcessingDrag.current) {
+      console.log('⚠️ Drag già in corso, ignorato');
+      return;
+    }
+    
     console.log('🎯 DragEnd - active:', active.id, 'over:', over?.id);
 
     // ✅ CONTROLLO CORRETTO: Verifica se l'ordine è cambiato
@@ -149,6 +157,9 @@ const Index = () => {
     if (hasOrderChanged && over) {
       console.log('💾 Salvo il nuovo ordine...');
       
+      // 🔒 ATTIVA la protezione
+      isProcessingDrag.current = true;
+      
       try {
         setIsMutating(true);
         await reorderApps(localApps);
@@ -157,13 +168,15 @@ const Index = () => {
         setTimeout(() => {
           setActiveApp(null);
           setIsMutating(false);
+          isProcessingDrag.current = false;  // 🔓 RILASCIA la protezione
           console.log('🔄 Reset completato');
-        }, 100);
+        }, 300);  // 🆕 Aumentato a 300ms per sicurezza
       } catch (error) {
         console.error("❌ Errore nel riordinare le app:", error);
         setLocalApps(apps); // Rollback solo in caso di errore
         setActiveApp(null);
         setIsMutating(false);
+        isProcessingDrag.current = false;  // 🔓 RILASCIA anche in caso di errore
       }
     } else {
       // Nessun cambio di ordine, semplicemente resetta lo stato
