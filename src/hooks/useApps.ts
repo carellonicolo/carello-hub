@@ -86,16 +86,25 @@ export const useApps = () => {
 
   const reorderAppsMutation = useMutation({
     mutationFn: async (reorderedApps: App[]) => {
+      console.log('🔧 mutationFn chiamata con', reorderedApps.length, 'apps');
+      
       // ✅ Esegui update in SEQUENZA per evitare race conditions
       for (let index = 0; index < reorderedApps.length; index++) {
         const app = reorderedApps[index];
-        const { error } = await supabase
+        console.log(`📝 Aggiornando ${app.name} a posizione ${index}`);
+        
+        const { data, error } = await supabase
           .from("apps")
           .update({ position: index })
           .eq("id", app.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error(`❌ Errore update ${app.name}:`, error);
+          throw error;
+        }
+        console.log(`✅ ${app.name} aggiornato con successo`, data);
       }
+      console.log('🎉 Tutti gli update completati');
     },
     onMutate: async (reorderedApps) => {
       // ✅ OPTIMISTIC UPDATE: Aggiorna la cache PRIMA che il database risponda

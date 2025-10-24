@@ -134,26 +134,31 @@ const Index = () => {
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
+    console.log('🎯 DragEnd - active:', active.id, 'over:', over?.id);
 
     if (over && active.id !== over.id) {
-      // localApps ha GIÀ l'ordine corretto grazie a handleDragOver!
+      console.log('📦 Ordine locale prima del save:', localApps.map(a => `${a.name}(${a.position})`));
+      console.log('📦 Tipo di reorderApps:', typeof reorderApps);
+      
       try {
-        setIsMutating(true);  // 🆕 Indica che stiamo salvando
-        await reorderApps(localApps);  // ✅ ASPETTA che la mutation completi
-        // ✅ Aspetta un attimo prima di resettare per assicurarsi che il DB sia aggiornato
+        setIsMutating(true);
+        console.log('🚀 Chiamando reorderApps...');
+        await reorderApps(localApps);
+        console.log('✅ Mutation completata con successo');
+        
         setTimeout(() => {
           setActiveApp(null);
-          setIsMutating(false);  // 🆕 Salvataggio completato
-        }, 100);  // 100ms di buffer
+          setIsMutating(false);
+          console.log('🔄 Reset completato');
+        }, 100);
       } catch (error) {
-        console.error("Errore nel riordinare le app:", error);
-        // In caso di errore, ripristina l'ordine originale
+        console.error("❌ Errore nel riordinare le app:", error);
         setLocalApps(apps);
         setActiveApp(null);
-        setIsMutating(false);  // 🆕 Reset anche in caso di errore
+        setIsMutating(false);
       }
     } else {
-      // Se non c'è stato un drop valido, ripristina l'ordine originale
+      console.log('⚠️ Drop non valido, ripristino ordine originale');
       setLocalApps(apps);
       setActiveApp(null);
     }
