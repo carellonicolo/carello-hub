@@ -86,17 +86,16 @@ export const useApps = () => {
 
   const reorderAppsMutation = useMutation({
     mutationFn: async (reorderedApps: App[]) => {
-      // Esegui tutti gli update in parallelo e gestisci eventuali errori
-      const updates = reorderedApps.map(async (app, index) => {
+      // ✅ Esegui update in SEQUENZA per evitare race conditions
+      for (let index = 0; index < reorderedApps.length; index++) {
+        const app = reorderedApps[index];
         const { error } = await supabase
           .from("apps")
           .update({ position: index })
           .eq("id", app.id);
 
         if (error) throw error;
-      });
-
-      await Promise.all(updates);
+      }
     },
     onMutate: async (reorderedApps) => {
       // ✅ OPTIMISTIC UPDATE: Aggiorna la cache PRIMA che il database risponda
@@ -110,9 +109,9 @@ export const useApps = () => {
 
       return { previousApps };
     },
-    onSuccess: async () => {
-      // ✅ refetchQueries per sincronizzare con il database
-      await queryClient.refetchQueries({ queryKey: ["apps"] });
+    onSuccess: () => {
+      // ✅ L'optimistic update ha già aggiornato la cache correttamente
+      // Non serve refetch perché il database è stato aggiornato dalla mutationFn
     },
     onError: (error, _, context) => {
       // ❌ Rollback in caso di errore

@@ -84,10 +84,12 @@ const Index = () => {
   const { isAdmin } = useIsAdmin();
   const [activeApp, setActiveApp] = useState<App | null>(null);
   const [localApps, setLocalApps] = useState<App[]>(apps);
+  const [isMutating, setIsMutating] = useState(false);  // 🆕 Traccia se stiamo salvando
 
-  // Sincronizza localApps con apps quando cambia (ma non durante il drag)
+  // Sincronizza localApps con apps quando cambia (ma non durante il drag o il salvataggio)
   useEffect(() => {
-    if (!activeApp) {
+    // ✅ NON sincronizzare se stiamo draggando o salvando
+    if (!activeApp && !isMutating) {
       // Solo sincronizza se l'ordine è effettivamente diverso
       // Confronta gli ID in ordine per vedere se sono cambiati
       const localIds = localApps.map(app => app.id).join(',');
@@ -97,7 +99,7 @@ const Index = () => {
         setLocalApps(apps);
       }
     }
-  }, [apps, activeApp, localApps]);
+  }, [apps, activeApp, localApps, isMutating]);  // 🆕 Aggiungi isMutating alle dipendenze
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -135,16 +137,20 @@ const Index = () => {
 
     if (over && active.id !== over.id) {
       // localApps ha GIÀ l'ordine corretto grazie a handleDragOver!
-      // Non serve ricalcolare con arrayMove, passa direttamente localApps
       try {
+        setIsMutating(true);  // 🆕 Indica che stiamo salvando
         await reorderApps(localApps);  // ✅ ASPETTA che la mutation completi
-        // Solo DOPO che il database è aggiornato, resetta activeApp
-        setActiveApp(null);
+        // ✅ Aspetta un attimo prima di resettare per assicurarsi che il DB sia aggiornato
+        setTimeout(() => {
+          setActiveApp(null);
+          setIsMutating(false);  // 🆕 Salvataggio completato
+        }, 100);  // 100ms di buffer
       } catch (error) {
         console.error("Errore nel riordinare le app:", error);
         // In caso di errore, ripristina l'ordine originale
         setLocalApps(apps);
         setActiveApp(null);
+        setIsMutating(false);  // 🆕 Reset anche in caso di errore
       }
     } else {
       // Se non c'è stato un drop valido, ripristina l'ordine originale
