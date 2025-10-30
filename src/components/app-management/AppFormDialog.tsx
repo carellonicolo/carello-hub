@@ -27,6 +27,7 @@ const appSchema = z.object({
   href: z
     .string()
     .url("Inserisci un URL valido")
+    .max(2048, "URL troppo lungo (massimo 2048 caratteri)")
     .regex(/^https?:\/\//, "Deve essere un link esterno (http:// o https://)"),
   icon_name: z.string().min(1, "Seleziona un'icona"),
   color: z.string().regex(/^hsl\(/, "Formato colore non valido"),
