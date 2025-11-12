@@ -219,7 +219,10 @@ const Index = () => {
             Prof. Carello
           </h1>
           <p className="text-xl md:text-2xl font-semibold text-foreground/90 drop-shadow-lg">
-            APP
+            APP - DASHBOARD
+          </p>
+          <p className="text-sm md:text-base font-normal text-foreground/70 drop-shadow-lg mt-4 max-w-lg text-center">
+            Professore abilitato per la scuola superiore ai sensi dell'art. 3 comma 8 del D.M 205/2023 – D.D.G. 3059/2024
           </p>
         </div>
 
