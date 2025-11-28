@@ -1,3 +1,4 @@
+import { memo } from "react";
 import * as Icons from "lucide-react";
 
 interface AppIconProps {
@@ -17,7 +18,7 @@ const addOpacityToHsl = (hsl: string, opacity: number): string => {
   return hsl.replace('hsl(', 'hsla(').replace(')', `, ${opacity})`);
 };
 
-const AppIcon = ({ iconName, label, href, color = "hsl(var(--primary))" }: AppIconProps) => {
+const AppIcon = memo(({ iconName, label, href, color = "hsl(var(--primary))" }: AppIconProps) => {
   const Icon = Icons[iconName as keyof typeof Icons] as React.ComponentType<any>;
 
   if (!Icon) return null;
@@ -53,6 +54,8 @@ const AppIcon = ({ iconName, label, href, color = "hsl(var(--primary))" }: AppIc
       </span>
     </a>
   );
-};
+});
+
+AppIcon.displayName = 'AppIcon';
 
 export default AppIcon;

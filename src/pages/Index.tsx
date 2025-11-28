@@ -4,7 +4,7 @@ import ProjectInfoButton from "@/components/ProjectInfoButton";
 import backgroundImage from "@/assets/dashboard-background.jpg";
 import { useApps, App } from "@/hooks/useApps";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import {
   DndContext,
   closestCenter,
@@ -91,19 +91,24 @@ const Index = () => {
   const isProcessingDrag = useRef(false);
   const dragOverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Memoize hash calculation to avoid recalculating on every render
+  const serverHash = useMemo(() =>
+    JSON.stringify(apps.map(app => ({ id: app.id, color: app.color, name: app.name, icon_name: app.icon_name, href: app.href }))),
+    [apps]
+  );
+
   // Sincronizza localApps con apps quando cambia (ma non durante il drag o il salvataggio)
   useEffect(() => {
     // ✅ NON sincronizzare se stiamo draggando o salvando
     if (!activeApp && !isMutating) {
       // Confronta l'intero stato delle app (ordine, colori, nomi, etc.)
       const localHash = JSON.stringify(localApps.map(app => ({ id: app.id, color: app.color, name: app.name, icon_name: app.icon_name, href: app.href })));
-      const serverHash = JSON.stringify(apps.map(app => ({ id: app.id, color: app.color, name: app.name, icon_name: app.icon_name, href: app.href })));
 
       if (localHash !== serverHash || localApps.length !== apps.length) {
         setLocalApps(apps);
       }
     }
-  }, [apps, activeApp, localApps, isMutating]);
+  }, [apps, activeApp, localApps, isMutating, serverHash]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
