@@ -1,5 +1,6 @@
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import * as Icons from "lucide-react";
+import type { LucideProps } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { App } from "@/hooks/useApps";
 import { useSortable } from "@dnd-kit/sortable";
@@ -27,7 +28,7 @@ export const AppCard = ({ app, onEdit, onDelete }: AppCardProps) => {
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const IconComponent = Icons[app.icon_name as keyof typeof Icons] as React.ComponentType<any>;
+  const IconComponent = Icons[app.icon_name as keyof typeof Icons] as React.ComponentType<LucideProps>;
 
   return (
     <div

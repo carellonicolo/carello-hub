@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import * as Icons from "lucide-react";
+import type { LucideProps } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -346,7 +347,7 @@ export const IconPicker = ({ value, onChange }: IconPickerProps) => {
       <ScrollArea className="h-[300px] border rounded-md p-4">
         <div className="grid grid-cols-6 gap-2">
           {filteredIcons.map((iconName) => {
-            const IconComponent = Icons[iconName as keyof typeof Icons] as React.ComponentType<any>;
+            const IconComponent = Icons[iconName as keyof typeof Icons] as React.ComponentType<LucideProps>;
             if (!IconComponent) return null;
 
             return (

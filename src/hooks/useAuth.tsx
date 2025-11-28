@@ -84,10 +84,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.session) {
         toast({ title: "Accesso effettuato con successo" });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Si è verificato un errore durante l'accesso";
       toast({
         title: "Errore di accesso",
-        description: error.message || "Si è verificato un errore durante l'accesso",
+        description: errorMessage,
         variant: "destructive",
       });
       throw error;
@@ -98,12 +99,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
+
       toast({ title: "Disconnesso con successo" });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Si è verificato un errore durante la disconnessione";
       toast({
         title: "Errore durante la disconnessione",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     }

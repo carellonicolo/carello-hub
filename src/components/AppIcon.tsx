@@ -1,5 +1,6 @@
 import { memo } from "react";
 import * as Icons from "lucide-react";
+import type { LucideProps } from "lucide-react";
 
 interface AppIconProps {
   iconName: string;
@@ -19,7 +20,7 @@ const addOpacityToHsl = (hsl: string, opacity: number): string => {
 };
 
 const AppIcon = memo(({ iconName, label, href, color = "hsl(var(--primary))" }: AppIconProps) => {
-  const Icon = Icons[iconName as keyof typeof Icons] as React.ComponentType<any>;
+  const Icon = Icons[iconName as keyof typeof Icons] as React.ComponentType<LucideProps>;
 
   if (!Icon) return null;
   return (
