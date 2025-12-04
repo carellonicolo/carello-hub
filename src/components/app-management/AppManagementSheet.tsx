@@ -97,13 +97,13 @@ export const AppManagementSheet = ({
             <SheetTitle>Gestione App</SheetTitle>
           </SheetHeader>
 
-          <div className="mt-6 space-y-4">
-            <Button onClick={handleAddClick} className="w-full">
+          <div className="mt-6 space-y-4 flex flex-col h-[calc(100vh-8rem)]">
+            <Button onClick={handleAddClick} className="w-full flex-shrink-0">
               <Plus className="w-4 h-4 mr-2" />
               Aggiungi Nuova App
             </Button>
 
-            <div className="space-y-2">
+            <div className="space-y-2 overflow-y-auto flex-1 pr-2">
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
