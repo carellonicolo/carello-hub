@@ -4,6 +4,7 @@ import ProjectInfoButton from "@/components/ProjectInfoButton";
 import backgroundImage from "@/assets/dashboard-background.jpg";
 import { useApps, App } from "@/hooks/useApps";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useResponsiveColumns } from "@/hooks/useResponsiveColumns";
 import { useState, useEffect, useRef, useMemo } from "react";
 import {
   DndContext,
@@ -85,6 +86,7 @@ const Index = () => {
     reorderApps
   } = useApps();
   const { isAdmin } = useIsAdmin();
+  const columns = useResponsiveColumns();
   const [activeApp, setActiveApp] = useState<App | null>(null);
   const [localApps, setLocalApps] = useState<App[]>(apps);
   const [isMutating, setIsMutating] = useState(false);
@@ -136,7 +138,7 @@ const Index = () => {
       if (dragOverTimeoutRef.current) {
         clearTimeout(dragOverTimeoutRef.current);
       }
-      
+
       dragOverTimeoutRef.current = setTimeout(() => {
         setLocalApps((items) => {
           const oldIndex = items.findIndex((item) => item.id === active.id);
@@ -149,13 +151,13 @@ const Index = () => {
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    
+
     // 🛡️ PROTEZIONE: Se stiamo già processando un drag, ignora questa chiamata
     if (isProcessingDrag.current) {
       console.log('⚠️ Drag già in corso, ignorato');
       return;
     }
-    
+
     console.log('🎯 DragEnd - active:', active.id, 'over:', over?.id);
 
     // ✅ CONTROLLO CORRETTO: Verifica se l'ordine è cambiato
@@ -170,15 +172,15 @@ const Index = () => {
 
     if (hasOrderChanged && over) {
       console.log('💾 Salvo il nuovo ordine...');
-      
+
       // 🔒 ATTIVA la protezione
       isProcessingDrag.current = true;
-      
+
       try {
         setIsMutating(true);
         await reorderApps(localApps);
         console.log('✅ Mutation completata con successo');
-        
+
         setTimeout(() => {
           setActiveApp(null);
           setIsMutating(false);
@@ -212,96 +214,102 @@ const Index = () => {
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat'
   }}>
-      {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background/40 via-background/30 to-background/50 backdrop-blur-sm" />
-      
-      <StatusBar />
-      
-      <main className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 pb-20">
-        {/* Title Section */}
-        <div className="text-center mb-16 animate-fade-in mt-20 md:mt-0">
-          <h1 className="text-4xl md:text-7xl font-bold tracking-tight text-foreground drop-shadow-2xl mb-2">
-            Prof. Carello
-          </h1>
-          <p className="text-xl md:text-2xl font-semibold text-foreground/90 drop-shadow-lg">
-            APP - DASHBOARD
-          </p>
-          <p className="text-sm md:text-base font-normal text-foreground/70 drop-shadow-lg mt-4 max-w-lg text-center">
-            Professore abilitato per la scuola superiore ai sensi dell'art. 3 comma 8 del D.M 205/2023 – D.D.G. 3059/2024
-          </p>
-        </div>
+    {/* Overlay for better text readability */}
+    <div className="absolute inset-0 bg-gradient-to-br from-background/40 via-background/30 to-background/50 backdrop-blur-sm" />
 
-        {/* Apps Grid */}
-        {isLoading ? <div className="text-foreground/80 text-lg">Caricamento...</div> : apps.length === 0 ? <div className="text-center text-foreground/80">
-            <p className="text-lg mb-2">Nessuna app configurata</p>
-            <p className="text-sm">Clicca sull'icona impostazioni in alto per iniziare</p>
-          </div> : isAdmin ? (
-            <DndContext
-              sensors={sensors}
-              collisionDetection={pointerWithin}
-              measuring={measuringConfig}
-              onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
-              onDragEnd={handleDragEnd}
+    <StatusBar />
+
+    <main className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 pb-20 pt-24 md:pt-0">
+      {/* Title Section */}
+      <div className="text-center mb-8 md:mb-16 animate-fade-in">
+        <h1 className="text-4xl md:text-7xl font-bold tracking-tight text-foreground drop-shadow-2xl mb-1 md:mb-2">
+          Prof. Carello
+        </h1>
+        <p className="text-xl md:text-2xl font-semibold text-foreground/90 drop-shadow-lg">
+          APP - DASHBOARD
+        </p>
+        <p className="text-sm md:text-base font-normal text-foreground/70 drop-shadow-lg mt-2 md:mt-4 max-w-lg text-center px-4">
+          Professore abilitato per la scuola superiore ai sensi dell'art. 3 comma 8 del D.M 205/2023 – D.D.G. 3059/2024
+        </p>
+      </div>
+
+      {/* Apps Grid */}
+      {isLoading ? <div className="text-foreground/80 text-lg">Caricamento...</div> : apps.length === 0 ? <div className="text-center text-foreground/80">
+        <p className="text-lg mb-2">Nessuna app configurata</p>
+        <p className="text-sm">Clicca sull'icona impostazioni in alto per iniziare</p>
+      </div> : isAdmin ? (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={pointerWithin}
+          measuring={measuringConfig}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={localApps.map((app) => app.id)}
+            strategy={rectSortingStrategy}
+          >
+            <div
+              className="grid gap-4 md:gap-8 lg:gap-12 animate-scale-in"
+              style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
             >
-              <SortableContext
-                items={localApps.map((app) => app.id)}
-                strategy={rectSortingStrategy}
-              >
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8 lg:gap-12 animate-scale-in">
-                  {localApps.map((app, index) => (
-                    <DraggableAppIcon key={app.id} app={app} index={index} />
-                  ))}
-                </div>
-              </SortableContext>
-
-              <DragOverlay dropAnimation={null}>
-                {activeApp ? (
-                  <div
-                    className="cursor-grabbing"
-                    style={{
-                      transform: 'scale(1.08) rotate(2deg)',
-                      opacity: 0.95,
-                      filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5))',
-                      transition: 'all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    }}
-                  >
-                    <AppIcon
-                      iconName={activeApp.icon_name}
-                      label={activeApp.name}
-                      href={activeApp.href}
-                      color={activeApp.color}
-                    />
-                  </div>
-                ) : null}
-              </DragOverlay>
-            </DndContext>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8 lg:gap-12 animate-scale-in">
-              {apps.map((app, index) => (
-                <div key={app.id} className="animate-fade-in" style={{
-                  animationDelay: `${index * 0.1}s`,
-                  animationFillMode: 'both'
-                }}>
-                  <AppIcon iconName={app.icon_name} label={app.name} href={app.href} color={app.color} />
-                </div>
+              {localApps.map((app, index) => (
+                <DraggableAppIcon key={app.id} app={app} index={index} />
               ))}
             </div>
-          )}
-      </main>
+          </SortableContext>
 
-      {/* Project Info Button - appears on hover in bottom left */}
-      <ProjectInfoButton />
-
-      {/* Footer with email */}
-      <footer className="fixed bottom-4 right-4 z-40">
-        <a
-          href="mailto:info@nicolocarello.it"
-          className="text-foreground/60 hover:text-foreground text-sm transition-colors duration-200 drop-shadow-md backdrop-blur-sm bg-background/20 px-3 py-1.5 rounded-lg hover:bg-background/30"
+          <DragOverlay dropAnimation={null}>
+            {activeApp ? (
+              <div
+                className="cursor-grabbing"
+                style={{
+                  transform: 'scale(1.08) rotate(2deg)',
+                  opacity: 0.95,
+                  filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5))',
+                  transition: 'all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                }}
+              >
+                <AppIcon
+                  iconName={activeApp.icon_name}
+                  label={activeApp.name}
+                  href={activeApp.href}
+                  color={activeApp.color}
+                />
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      ) : (
+        <div
+          className="grid gap-4 md:gap-8 lg:gap-12 animate-scale-in"
+          style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
         >
-          info@nicolocarello.it
-        </a>
-      </footer>
-    </div>;
+          {apps.map((app, index) => (
+            <div key={app.id} className="animate-fade-in" style={{
+              animationDelay: `${index * 0.1}s`,
+              animationFillMode: 'both'
+            }}>
+              <AppIcon iconName={app.icon_name} label={app.name} href={app.href} color={app.color} />
+            </div>
+          ))}
+        </div>
+      )}
+    </main>
+
+    {/* Project Info Button - appears on hover in bottom left */}
+    <ProjectInfoButton />
+
+    {/* Footer with email */}
+    <footer className="fixed bottom-4 right-4 z-40">
+      <a
+        href="mailto:info@nicolocarello.it"
+        className="text-foreground/60 hover:text-foreground text-sm transition-colors duration-200 drop-shadow-md backdrop-blur-sm bg-background/20 px-3 py-1.5 rounded-lg hover:bg-background/30"
+      >
+        info@nicolocarello.it
+      </a>
+    </footer>
+  </div>;
 };
 export default Index;
