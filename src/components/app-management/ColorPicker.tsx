@@ -9,18 +9,41 @@ interface ColorPickerProps {
 }
 
 const PRESET_COLORS = [
-  "hsl(0, 85%, 60%)",    // Red
-  "hsl(217, 91%, 60%)",  // Blue
-  "hsl(262, 83%, 58%)",  // Purple
-  "hsl(35, 100%, 55%)",  // Orange
-  "hsl(150, 70%, 45%)",  // Green
-  "hsl(280, 70%, 60%)",  // Magenta
-  "hsl(195, 85%, 55%)",  // Cyan
-  "hsl(45, 95%, 55%)",   // Yellow
-  "hsl(340, 80%, 55%)",  // Pink
-  "hsl(160, 75%, 50%)",  // Teal
-  "hsl(25, 85%, 60%)",   // Coral
-  "hsl(240, 70%, 65%)",  // Indigo
+  // Rossi (6 sfumature)
+  "hsl(0, 85%, 35%)", "hsl(0, 85%, 45%)", "hsl(0, 85%, 55%)", 
+  "hsl(0, 85%, 65%)", "hsl(0, 70%, 75%)", "hsl(0, 60%, 85%)",
+  
+  // Arancioni (6 sfumature)
+  "hsl(25, 90%, 40%)", "hsl(25, 90%, 50%)", "hsl(30, 95%, 55%)",
+  "hsl(35, 100%, 55%)", "hsl(40, 95%, 65%)", "hsl(45, 90%, 75%)",
+  
+  // Gialli (6 sfumature)
+  "hsl(45, 95%, 45%)", "hsl(48, 95%, 50%)", "hsl(50, 95%, 55%)",
+  "hsl(52, 95%, 60%)", "hsl(55, 90%, 70%)", "hsl(58, 85%, 80%)",
+  
+  // Verdi (6 sfumature)
+  "hsl(120, 60%, 30%)", "hsl(130, 65%, 40%)", "hsl(140, 70%, 45%)",
+  "hsl(150, 70%, 50%)", "hsl(160, 60%, 60%)", "hsl(170, 55%, 70%)",
+  
+  // Ciano/Teal (6 sfumature)
+  "hsl(175, 70%, 35%)", "hsl(180, 75%, 40%)", "hsl(185, 80%, 45%)",
+  "hsl(190, 85%, 50%)", "hsl(195, 80%, 60%)", "hsl(200, 75%, 70%)",
+  
+  // Blu (6 sfumature)
+  "hsl(210, 90%, 35%)", "hsl(215, 90%, 45%)", "hsl(220, 90%, 55%)",
+  "hsl(225, 85%, 60%)", "hsl(230, 80%, 70%)", "hsl(235, 75%, 80%)",
+  
+  // Viola/Purple (6 sfumature)
+  "hsl(260, 80%, 40%)", "hsl(265, 80%, 50%)", "hsl(270, 75%, 55%)",
+  "hsl(275, 70%, 60%)", "hsl(280, 65%, 70%)", "hsl(285, 60%, 80%)",
+  
+  // Rosa/Magenta (6 sfumature)
+  "hsl(320, 75%, 40%)", "hsl(330, 80%, 50%)", "hsl(340, 80%, 55%)",
+  "hsl(345, 75%, 60%)", "hsl(350, 70%, 70%)", "hsl(355, 65%, 80%)",
+  
+  // Grigi (6 sfumature)
+  "hsl(0, 0%, 15%)", "hsl(0, 0%, 30%)", "hsl(0, 0%, 45%)",
+  "hsl(0, 0%, 60%)", "hsl(0, 0%, 75%)", "hsl(0, 0%, 90%)",
 ];
 
 export const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
@@ -94,14 +117,14 @@ export const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-6 gap-2">
+    <div className="space-y-3">
+      <div className="grid grid-cols-9 gap-1.5">
         {PRESET_COLORS.map((color) => (
           <button
             key={color}
             type="button"
             onClick={() => onChange(color)}
-            className={`w-full aspect-square rounded-lg border-2 transition-all hover:scale-110 ${
+            className={`h-6 rounded-md border-2 transition-all hover:scale-110 ${
               value === color ? "border-foreground scale-110" : "border-transparent"
             }`}
             style={{ background: color }}
@@ -134,10 +157,10 @@ export const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
 
       <div className="flex items-center gap-2">
         <div
-          className="w-8 h-8 rounded border"
+          className="w-6 h-6 rounded border"
           style={{ background: value }}
         />
-        <span className="text-sm text-muted-foreground">{value}</span>
+        <span className="text-xs text-muted-foreground">{value}</span>
       </div>
     </div>
   );
