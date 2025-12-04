@@ -10,314 +10,452 @@ interface IconPickerProps {
   onChange: (iconName: string) => void;
 }
 
-// Array senza duplicati - ogni icona appare una sola volta (600+ icone totali)
+// Array senza duplicati - ogni icona appare una sola volta (700+ icone totali)
 const COMMON_ICONS = Array.from(new Set([
-  // Generale & Navigazione (45 icone)
-  "Home", "Search", "Settings", "Download", "Upload", "Edit", 
-  "Plus", "Minus", "Check", "X", "ChevronRight", "ChevronLeft",
-  "ChevronUp", "ChevronDown", "ChevronsLeft", "ChevronsRight", "ChevronsUp", "ChevronsDown",
-  "Menu", "MoreHorizontal", "MoreVertical", "Filter", "FilterX", "SortAsc", "SortDesc",
-  "Maximize2", "Minimize2", "Fullscreen", "Shrink", "Expand",
-  "PanelLeft", "PanelRight", "PanelTop", "PanelBottom",
-  "CornerUpLeft", "CornerUpRight", "CornerDownLeft", "CornerDownRight",
-  "RotateCw", "RotateCcw", "RefreshCw", "RefreshCcw", "Repeat", "Shuffle",
+  // ========== INFORMATICA E PROGRAMMAZIONE ==========
   
-  // Arrows & Directions (55 icone)
+  // Code & Development Base (60 icone)
+  "Code", "Code2", "CodeSquare", "CodeXml", "SquareCode", "SquareTerminal",
+  "Brackets", "Braces", "BracketsDot", "Parentheses",
+  "Terminal", "TerminalSquare", "Command", "Shell",
+  "Bug", "BugOff", "BugPlay", "SearchCode",
+  "Binary", "FileCode", "FileCode2", "FolderCode", "ScrollCode",
+  "Regex", "Variable", "Function", "FunctionSquare", "Component",
+  "Layers", "Layers2", "Layers3", "Puzzle", "Plugin", "Blocks",
+  "Webhook", "WebhookOff", "Api", "Workflow", "WorkflowOff",
+  "AppWindow", "AppWindowMac", "Bot", "BotOff", "BotMessageSquare",
+  "Clipboard", "ClipboardCode", "ClipboardCopy", "ClipboardPaste", "ClipboardList",
+  "ClipboardCheck", "ClipboardType", "ClipboardX",
+  "Replace", "ReplaceAll", "Diff", "Merge", "Split",
+  "SquareArrowOutUpRight", "SquareDashedBottom", "SquareDashedBottomCode",
+  
+  // Git & Version Control (25 icone)
+  "GitBranch", "GitBranchPlus", "GitCommit", "GitCommitHorizontal", "GitCommitVertical",
+  "GitCompare", "GitCompareArrows", "GitFork", "GitGraph", "GitMerge",
+  "GitPullRequest", "GitPullRequestArrow", "GitPullRequestClosed",
+  "GitPullRequestCreate", "GitPullRequestCreateArrow", "GitPullRequestDraft",
+  "Github", "Gitlab", "History", "HistoryIcon",
+  "Undo", "Undo2", "Redo", "Redo2", "RotateCcw",
+  
+  // File Types & Formats (50 icone)
+  "File", "FileText", "FilePlus", "FilePlus2", "FileMinus", "FileEdit",
+  "FileCheck", "FileCheck2", "FileX", "FileX2",
+  "FileJson", "FileJson2", "FileCode", "FileCode2",
+  "FileImage", "FileVideo", "FileAudio", "FileMusic", "FileSpreadsheet",
+  "FileBadge", "FileBadge2", "FileClock", "FileDigit", "FileHeart",
+  "FileKey", "FileKey2", "FileLock", "FileLock2",
+  "FileOutput", "FileInput", "FileSearch", "FileSearch2",
+  "FileStack", "FileSymlink", "FileTerminal", "FileType", "FileType2",
+  "FileWarning", "FileDiff", "FileArchive", "FileSliders",
+  "FilePen", "FilePenLine", "FileQuestion", "FileScan",
+  "FileUp", "FileDown", "FileCog", "FileAxis3d", "FileBox",
+  
+  // Database & Server (45 icone)
+  "Database", "DatabaseBackup", "DatabaseZap",
+  "Server", "ServerCog", "ServerCrash", "ServerOff",
+  "Container", "Boxes", "Package", "Package2", "PackageCheck",
+  "PackageMinus", "PackageOpen", "PackagePlus", "PackageSearch", "PackageX",
+  "Archive", "ArchiveRestore", "ArchiveX",
+  "Cloud", "CloudAlert", "CloudCog", "CloudDownload", "CloudOff", "CloudUpload",
+  "CloudDrizzle", "CloudFog", "CloudHail", "CloudLightning",
+  "CloudMoon", "CloudMoonRain", "CloudRain", "CloudRainWind",
+  "CloudSnow", "CloudSun", "CloudSunRain",
+  "HardDrive", "HardDriveDownload", "HardDriveUpload",
+  "Disc", "Disc2", "Disc3", "DiscAlbum", "Save", "SaveAll", "SaveOff",
+  
+  // Hardware & Electronics (70 icone)
+  "Cpu", "MemoryStick", "CircuitBoard", "Microchip", "Chip",
+  "Nfc", "QrCode", "Barcode", "ScanBarcode", "ScanLine",
+  "Monitor", "MonitorCheck", "MonitorCog", "MonitorDot", "MonitorDown",
+  "MonitorOff", "MonitorPause", "MonitorPlay", "MonitorSmartphone",
+  "MonitorSpeaker", "MonitorStop", "MonitorUp", "MonitorX",
+  "Laptop", "Laptop2", "LaptopMinimal", "LaptopMinimalCheck",
+  "Smartphone", "SmartphoneCharging", "SmartphoneNfc", "TabletSmartphone",
+  "Tablet", "Tv", "Tv2", "TvMinimal", "TvMinimalPlay",
+  "Keyboard", "Mouse", "MousePointer", "MousePointer2", "MousePointerBan",
+  "MousePointerClick", "Touchpad", "TouchpadOff",
+  "Usb", "Cable", "Plug", "Plug2", "PlugZap", "PlugZap2", "Unplug",
+  "Power", "PowerCircle", "PowerOff", "PowerSquare",
+  "Battery", "BatteryCharging", "BatteryFull", "BatteryLow",
+  "BatteryMedium", "BatteryWarning",
+  "Printer", "PrinterCheck", "Projector", "Webcam", "Camera", "CameraOff",
+  "Watch", "Headphones", "Headset", "Speaker", "Radio",
+  
+  // Network & Connectivity (40 icone)
+  "Wifi", "WifiHigh", "WifiLow", "WifiOff", "WifiZero",
+  "Bluetooth", "BluetoothConnected", "BluetoothOff", "BluetoothSearching",
+  "Router", "Network", "Globe", "Globe2", "GlobeLock", "Earth", "EarthLock",
+  "Link", "Link2", "Link2Off", "Unlink", "Unlink2", "ExternalLink",
+  "Share", "Share2", "Forward", "Send", "SendHorizontal", "SendToBack",
+  "Antenna", "Signal", "SignalHigh", "SignalLow", "SignalMedium", "SignalZero",
+  "Rss", "Podcast", "Satellite", "SatelliteDish", "Radar", "RadioTower",
+  
+  // Security & Encryption (35 icone)
+  "Lock", "LockKeyhole", "LockKeyholeOpen", "LockOpen", "Unlock",
+  "Key", "KeyRound", "KeySquare",
+  "Shield", "ShieldAlert", "ShieldBan", "ShieldCheck", "ShieldEllipsis",
+  "ShieldHalf", "ShieldMinus", "ShieldOff", "ShieldPlus", "ShieldQuestion", "ShieldX",
+  "Fingerprint", "ScanFace", "ScanEye", "Eye", "EyeOff", "EyeClosed",
+  "UserCheck", "UserCog", "UserX", "Ban",
+  "AlertCircle", "AlertTriangle", "AlertOctagon", "OctagonAlert", "TriangleAlert",
+  "CircleAlert", "Info",
+  
+  // ========== MATEMATICA E SCIENZA ==========
+  
+  // Mathematical Symbols (50 icone)
+  "Pi", "Sigma", "Omega", "Infinity", "Equal", "EqualNot", "EqualApproximately",
+  "Plus", "PlusCircle", "PlusSquare", "CirclePlus", "SquarePlus",
+  "Minus", "MinusCircle", "MinusSquare", "CircleMinus", "SquareMinus",
+  "X", "XCircle", "XSquare", "CircleX", "SquareX",
+  "Divide", "DivideCircle", "DivideSquare", "CircleDivide", "SquareDivide",
+  "Percent", "Hash", "Asterisk", "AtSign", "Ampersand",
+  "Slash", "SlashSquare", "Superscript", "Subscript",
+  "Calculator", "Function", "FunctionSquare", "Variable",
+  "Brackets", "Braces", "Parentheses", "BracketsDot",
+  "TrendingUp", "TrendingDown", "TrendingUpDown",
+  "ChevronUp", "ChevronDown", "ChevronsUpDown",
+  
+  // Charts & Data Visualization (45 icone)
+  "ChartArea", "ChartBar", "ChartBarBig", "ChartBarDecreasing", "ChartBarIncreasing",
+  "ChartBarStacked", "ChartCandlestick", "ChartColumn", "ChartColumnBig",
+  "ChartColumnDecreasing", "ChartColumnIncreasing", "ChartColumnStacked",
+  "ChartLine", "ChartNetwork", "ChartNoAxesColumn", "ChartNoAxesCombined",
+  "ChartNoAxesGantt", "ChartPie", "ChartScatter", "ChartSpline",
+  "BarChart", "BarChart2", "BarChart3", "BarChart4", "BarChartBig",
+  "BarChartHorizontal", "BarChartHorizontalBig",
+  "PieChart", "LineChart", "AreaChart", "CandlestickChart", "GanttChart",
+  "Activity", "ActivitySquare", "Gauge", "GaugeCircle",
+  "Table", "Table2", "TableProperties", "TableCellsMerge", "TableCellsSplit",
+  "Grid", "Grid2x2", "Grid2x2Check", "Grid2x2Plus", "Grid2x2X", "Grid3x3",
+  
+  // Geometry & 3D (40 icone)
+  "Square", "SquareCheck", "SquareCheckBig", "SquareDashed", "SquareDashedMousePointer",
+  "Circle", "CircleCheck", "CircleCheckBig", "CircleDashed", "CircleDot",
+  "CircleDotDashed", "CircleEllipsis", "CircleFadingArrowUp", "CircleFadingPlus",
+  "Triangle", "TriangleAlert", "TriangleRight",
+  "Pentagon", "Hexagon", "Octagon", "OctagonAlert", "OctagonMinus", "OctagonPause", "OctagonX",
+  "Diamond", "DiamondMinus", "DiamondPercent", "DiamondPlus",
+  "Star", "StarHalf", "StarOff", "Sparkle", "Sparkles",
+  "Box", "BoxSelect", "Boxes", "Cuboid", "Cylinder",
+  "Axis3d", "Move3d", "Rotate3d", "Scale3d", "Orbit", "Scaling",
+  "Blend", "Spline",
+  
+  // Science & Laboratory (50 icone)
+  "Atom", "Dna", "DnaOff", "FlaskConical", "FlaskConicalOff", "FlaskRound",
+  "TestTube", "TestTube2", "TestTubes", "Beaker",
+  "Microscope", "Telescope", "Binoculars",
+  "Brain", "BrainCircuit", "BrainCog",
+  "Lightbulb", "LightbulbOff", "Lamp", "LampCeiling", "LampDesk",
+  "LampFloor", "LampWallDown", "LampWallUp",
+  "Magnet", "Zap", "ZapOff", "Flame", "FlameKindling",
+  "Thermometer", "ThermometerSnowflake", "ThermometerSun",
+  "Radiation", "Biohazard", "Skull", "SkullIcon",
+  "Waves", "AudioWaveform", "Wind", "Tornado",
+  "Sunrise", "Sunset", "Sun", "SunDim", "SunMedium", "SunMoon", "SunSnow",
+  "Moon", "MoonStar", "Eclipse",
+  "Droplet", "Droplets", "CloudRain", "Snowflake",
+  
+  // ========== UI E DESIGN ==========
+  
+  // Layout & Structure (60 icone)
+  "Layout", "LayoutDashboard", "LayoutGrid", "LayoutList", "LayoutTemplate",
+  "LayoutPanelLeft", "LayoutPanelTop",
+  "Sidebar", "SidebarClose", "SidebarOpen",
+  "PanelLeft", "PanelLeftClose", "PanelLeftDashed", "PanelLeftOpen",
+  "PanelRight", "PanelRightClose", "PanelRightDashed", "PanelRightOpen",
+  "PanelTop", "PanelTopClose", "PanelTopDashed", "PanelTopOpen",
+  "PanelBottom", "PanelBottomClose", "PanelBottomDashed", "PanelBottomOpen",
+  "Columns", "Columns2", "Columns3", "Columns4",
+  "Rows", "Rows2", "Rows3", "Rows4",
+  "SplitSquareHorizontal", "SplitSquareVertical",
+  "RectangleHorizontal", "RectangleVertical", "RectangleEllipsis",
+  "Maximize", "Maximize2", "Minimize", "Minimize2",
+  "ZoomIn", "ZoomOut", "Scan", "ScanLine", "ScanSearch", "ScanText",
+  "Fullscreen", "Shrink", "Expand", "Move", "MoveDiagonal", "MoveDiagonal2",
+  "MoveHorizontal", "MoveVertical", "GripHorizontal", "GripVertical", "Grip",
+  "Separator", "SeparatorHorizontal", "SeparatorVertical",
+  
+  // Navigation (50 icone)
+  "Home", "Search", "SearchCheck", "SearchCode", "SearchSlash", "SearchX",
+  "Settings", "Settings2", "Cog", "SlidersHorizontal", "SlidersVertical",
+  "Menu", "MenuSquare", "MoreHorizontal", "MoreVertical", "Ellipsis", "EllipsisVertical",
+  "Filter", "FilterX", "SortAsc", "SortDesc", "ArrowUpDown", "ArrowDownUp",
+  "ChevronRight", "ChevronLeft", "ChevronUp", "ChevronDown",
+  "ChevronsLeft", "ChevronsRight", "ChevronsUp", "ChevronsDown", "ChevronsUpDown",
   "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",
   "ArrowUpLeft", "ArrowUpRight", "ArrowDownLeft", "ArrowDownRight",
+  "CornerUpLeft", "CornerUpRight", "CornerDownLeft", "CornerDownRight",
+  "RotateCw", "RotateCcw", "RefreshCw", "RefreshCcw", "Repeat", "Repeat1", "Repeat2", "Shuffle",
+  
+  // Arrows Extended (40 icone)
   "ArrowBigUp", "ArrowBigDown", "ArrowBigLeft", "ArrowBigRight",
   "ArrowBigUpDash", "ArrowBigDownDash", "ArrowBigLeftDash", "ArrowBigRightDash",
   "ArrowUpCircle", "ArrowDownCircle", "ArrowLeftCircle", "ArrowRightCircle",
   "ArrowUpSquare", "ArrowDownSquare", "ArrowLeftSquare", "ArrowRightSquare",
-  "ArrowUpDown", "ArrowLeftRight", "ArrowUpFromDot", "ArrowUpFromLine",
+  "ArrowLeftRight", "ArrowUpFromDot", "ArrowUpFromLine",
   "ArrowDownToLine", "ArrowDownToDot", "ArrowUpToLine",
   "ArrowRightFromLine", "ArrowRightToLine", "ArrowLeftFromLine", "ArrowLeftToLine",
-  "MoveUp", "MoveDown", "MoveLeft", "MoveRight", "Move", "MoveDiagonal", "MoveDiagonal2",
-  "MoveHorizontal", "MoveVertical", "Move3d",
+  "MoveUp", "MoveDown", "MoveLeft", "MoveRight",
   "Navigation", "Navigation2", "NavigationOff", "Compass",
-  "TrendingUp", "TrendingDown", "Milestone", "Signpost", "SignpostBig",
+  "Milestone", "Signpost", "SignpostBig",
+  "CircleArrowUp", "CircleArrowDown", "CircleArrowLeft", "CircleArrowRight",
   
-  // Media & Comunicazione (65 icone)
-  "Camera", "CameraOff", "Image", "ImageOff", "ImagePlus", "ImageMinus", 
-  "Video", "VideoOff", "Music", "Music2", "Music3", "Music4",
-  "Phone", "PhoneCall", "PhoneForwarded", "PhoneIncoming", "PhoneMissed", 
-  "PhoneOff", "PhoneOutgoing", "Send", "SendHorizontal", "SendToBack",
-  "Share", "Share2", "Link", "Link2", "ExternalLink", "Unlink", "Unlink2",
-  "Mic", "Mic2", "MicOff", "MicVocal", "Radio", "Tv", "Tv2",
-  "Film", "Clapperboard", "Headphones", "Headset", "Podcast",
-  "Volume", "Volume1", "Volume2", "VolumeX",
-  "Play", "PlayCircle", "PlaySquare", "Pause", "PauseCircle", "PauseOctagon",
-  "Stop", "StopCircle", "SkipForward", "SkipBack", "FastForward", "Rewind",
-  "Airplay", "Cast", "Disc", "Disc2", "Disc3", "DiscAlbum",
-  "AudioLines", "AudioWaveform", "Voicemail", "Signal", "SignalHigh",
-  "SignalLow", "SignalMedium", "SignalZero", "Rss", "Antenna",
-  "Satellite", "SatelliteDish", "Radar", "Megaphone", "Speaker", "Podcast",
+  // ========== BUSINESS E FINANZA ==========
   
-  // Social Media & Branding (40 icone)
-  "Github", "Gitlab", "Twitter", "Linkedin", "Facebook", "Instagram", 
-  "Youtube", "Twitch", "MessageSquare", "MessageCircle", "MessageSquareCode",
-  "MessageSquareDashed", "MessageSquareDot", "MessageSquareHeart",
-  "MessageSquarePlus", "MessageSquareQuote", "MessageSquareShare",
-  "AtSign", "Hash", "Chrome", "Firefox", "Figma", "Framer",
-  "Slack", "Trello", "Dribbble", "Codepen", "Codesandbox",
-  "Mail", "MailOpen", "MailPlus", "MailMinus", "MailCheck", "MailX",
-  "Inbox", "Send", "Reply", "ReplyAll", "Forward", "Archive",
-  
-  // Business & Finance (60 icone)
+  // Currency & Finance (45 icone)
   "DollarSign", "CircleDollarSign", "BadgeDollarSign",
   "Euro", "BadgeEuro", "PoundSterling", "BadgePoundSterling",
-  "IndianRupee", "JapaneseYen", "Bitcoin", "Coins", "Banknote",
-  "TrendingUp", "TrendingDown", "BarChart", "BarChart2", "BarChart3", "BarChart4",
-  "PieChart", "LineChart", "AreaChart", "CandlestickChart",
-  "Activity", "Briefcase", "Receipt", "Wallet", "WalletCards",
-  "BadgePercent", "Percent", "Calculator",
-  "CreditCard", "Landmark", "LandmarkOff", "Building", "Building2",
-  "Store", "Warehouse", "Factory", "Hotel", "Castle", "Church",
-  "PiggyBank", "Vault", "Scale", "Gavel", "ScrollText",
+  "IndianRupee", "BadgeIndianRupee", "JapaneseYen", "BadgeJapaneseYen",
+  "SwissFranc", "BadgeSwissFranc", "RussianRuble", "BadgeRussianRuble",
+  "Bitcoin", "Coins", "Banknote", "Wallet", "WalletCards", "WalletMinimal",
+  "CreditCard", "Receipt", "ReceiptText",
+  "PiggyBank", "Vault", "Landmark", "LandmarkOff",
+  "TrendingUp", "TrendingDown", "BarChart", "PieChart", "LineChart",
+  "Scale", "Scale3d", "Gavel", "ScrollText",
   "Handshake", "HandshakeOff", "Award", "Trophy", "Medal",
-  "Target", "Crosshair", "Focus", "Gauge", "GaugeCircle",
-  "ArrowUpCircle", "ArrowDownCircle", "Equal", "Minus", "Plus",
-  "BadgePlus", "BadgeMinus", "BadgeCheck", "BadgeX", "BadgeAlert",
+  "Target", "Crosshair", "Focus", "Goal",
   
-  // File & Documenti (70 icone)
-  "File", "FileText", "FilePlus", "FileMinus", "FileEdit", "FileCheck",
-  "FileX", "FileX2", "FileCode", "FileCode2", "FileJson",
-  "FileImage", "FileVideo", "FileAudio", "FileMusic", "FileSpreadsheet",
-  "FileBadge", "FileClock", "FileDigit", "FileHeart", "FileKey",
-  "FileLock", "FileLock2", "FileOutput", "FileInput", "FileSearch",
-  "FileSearch2", "FileStack", "FileSymlink", "FileTerminal", "FileType",
-  "FileType2", "FileWarning", "FileDiff", "FileArchive",
+  // Business (40 icone)
+  "Briefcase", "BriefcaseBusiness", "BriefcaseMedical", "BriefcaseConveyorBelt",
+  "Building", "Building2", "BuildingIcon",
+  "Store", "Warehouse", "Factory", "Hotel", "Castle", "Church", "School", "Library",
+  "Presentation", "ChartNoAxesCombined", "BadgePercent",
+  "IdCard", "BadgeCheck", "BadgeAlert", "BadgeHelp", "BadgeInfo",
+  "Contact", "Contact2", "Users", "Users2", "UsersRound",
+  "User", "User2", "UserPlus", "UserMinus", "UserCheck", "UserX", "UserCog",
+  "UserCircle", "UserCircle2", "UserSquare", "UserSquare2",
+  "UserRound", "UserRoundCheck", "UserRoundCog", "UserRoundMinus", "UserRoundPlus",
+  
+  // ========== MEDIA E COMUNICAZIONE ==========
+  
+  // Media Controls (40 icone)
+  "Play", "PlayCircle", "PlaySquare", "Pause", "PauseCircle", "PauseOctagon",
+  "Stop", "StopCircle", "SkipForward", "SkipBack", "FastForward", "Rewind",
+  "Volume", "Volume1", "Volume2", "VolumeX", "VolumeOff",
+  "Mic", "Mic2", "MicOff", "MicVocal",
+  "Video", "VideoOff", "VideoIcon",
+  "Music", "Music2", "Music3", "Music4",
+  "Image", "ImageOff", "ImagePlus", "ImageMinus", "ImageDown", "ImageUp", "Images",
+  "Film", "Clapperboard", "ClapperboardIcon",
+  "AudioLines", "AudioWaveform", "Voicemail",
+  
+  // Communication (45 icone)
+  "Phone", "PhoneCall", "PhoneForwarded", "PhoneIncoming", "PhoneMissed",
+  "PhoneOff", "PhoneOutgoing",
+  "MessageSquare", "MessageCircle", "MessageSquareCode", "MessageSquareDashed",
+  "MessageSquareDot", "MessageSquareHeart", "MessageSquareMore",
+  "MessageSquarePlus", "MessageSquareQuote", "MessageSquareReply",
+  "MessageSquareShare", "MessageSquareText", "MessageSquareWarning", "MessageSquareX",
+  "MessageCircleCode", "MessageCircleDashed", "MessageCircleHeart",
+  "MessageCircleMore", "MessageCirclePlus", "MessageCircleQuestion",
+  "MessageCircleReply", "MessageCircleWarning", "MessageCircleX",
+  "MessagesSquare", "Mail", "MailOpen", "MailPlus", "MailMinus", "MailCheck", "MailX",
+  "MailQuestion", "MailSearch", "MailWarning", "Mails",
+  "Inbox", "AtSign", "Reply", "ReplyAll",
+  
+  // Social (25 icone)
+  "Github", "Gitlab", "Twitter", "Linkedin", "Facebook", "Instagram",
+  "Youtube", "Twitch", "Chrome", "Firefox", "Figma", "Framer",
+  "Slack", "Trello", "Dribbble", "Codepen", "Codesandbox",
+  "Hash", "Verified", "BadgeCheck", "CheckCheck",
+  "Heart", "HeartHandshake", "HeartCrack", "HeartOff",
+  
+  // ========== DOCUMENTI E TESTO ==========
+  
+  // Text & Typography (45 icone)
+  "Type", "Heading", "Heading1", "Heading2", "Heading3", "Heading4", "Heading5", "Heading6",
+  "TextCursor", "TextCursorInput", "TextQuote", "TextSelect", "Text",
+  "Quote", "Pilcrow", "WholeWord",
+  "Strikethrough", "Underline", "Bold", "Italic",
+  "AlignLeft", "AlignCenter", "AlignRight", "AlignJustify",
+  "AlignStartHorizontal", "AlignStartVertical",
+  "AlignCenterHorizontal", "AlignCenterVertical",
+  "AlignEndHorizontal", "AlignEndVertical",
+  "ListOrdered", "ListChecks", "ListPlus", "ListMinus", "ListX",
+  "ListTree", "ListTodo", "ListFilter", "ListCollapse", "ListEnd", "ListMusic",
+  "ListRestart", "ListStart", "ListVideo",
+  "Indent", "IndentDecrease", "IndentIncrease", "Outdent",
+  
+  // Documents (40 icone)
   "Folder", "FolderOpen", "FolderPlus", "FolderMinus", "FolderEdit",
   "FolderArchive", "FolderClosed", "FolderGit", "FolderGit2",
   "FolderHeart", "FolderInput", "FolderKey", "FolderLock",
   "FolderOutput", "FolderSearch", "FolderSearch2", "FolderSymlink",
   "FolderTree", "FolderUp", "FolderX", "FolderCheck", "FolderCog",
-  "Files", "Copy", "CopyCheck", "CopyPlus", "CopyMinus", "CopyX",
-  "Clipboard", "ClipboardCheck", "ClipboardCopy", "ClipboardList",
-  "ClipboardPaste", "ClipboardType", "ClipboardX",
-  "Book", "BookOpen", "BookMarked", "BookCopy", "Notebook", "NotebookPen",
+  "FolderDot", "FolderDown", "FolderKanban", "FolderOpenDot", "FolderPen",
+  "FolderRoot", "FolderSync", "Folders",
+  "Files", "Copy", "CopyCheck", "CopyPlus", "CopyMinus", "CopyX", "CopySlash",
+  "Book", "BookOpen", "BookOpenCheck", "BookOpenText",
+  "BookMarked", "BookCopy", "Notebook", "NotebookPen", "NotebookTabs", "NotebookText",
   
-  // UI & Layout (75 icone)
-  "Layers", "Layers2", "Layers3", "Grid", "Grid2x2", "Grid3x3",
-  "List", "ListOrdered", "ListChecks", "ListPlus", "ListMinus", "ListX",
-  "ListTree", "Layout", "LayoutDashboard", "LayoutGrid", "LayoutList",
-  "LayoutTemplate", "LayoutPanelLeft", "LayoutPanelTop",
-  "Sidebar", "SidebarClose", "SidebarOpen",
-  "PanelLeftClose", "PanelLeftOpen", "PanelRightClose", "PanelRightOpen",
-  "PanelTopClose", "PanelTopOpen", "PanelBottomClose", "PanelBottomOpen",
-  "Maximize", "Minimize", "ZoomIn", "ZoomOut", "Scan", "ScanLine",
-  "Columns", "Columns2", "Columns3", "Rows", "Rows2", "Rows3", "Rows4",
-  "SplitSquareHorizontal", "SplitSquareVertical",
-  "Square", "Circle", "Triangle", "Octagon", "Pentagon", "Hexagon",
-  "Diamond", "Box", "BoxSelect", "Package", "Package2", "PackageCheck",
-  "PackageMinus", "PackagePlus", "PackageX", "PackageOpen", "PackageSearch",
-  "RectangleHorizontal", "RectangleVertical", "Aperture", "Album",
-  "Frame", "Crop", "ScanBarcode", "ScanFace", "ScanEye", "Orbit", "Scaling",
+  // ========== TEMPO E CALENDARIO ==========
   
-  // Sicurezza & Privacy (35 icone)
-  "Lock", "LockOpen", "LockKeyhole", "LockKeyholeOpen",
-  "Unlock", "Key", "KeyRound", "KeySquare",
-  "Shield", "ShieldAlert", "ShieldBan", "ShieldCheck", "ShieldEllipsis",
-  "ShieldHalf", "ShieldMinus", "ShieldOff", "ShieldPlus", "ShieldQuestion", "ShieldX",
-  "Eye", "EyeOff", "EyeClosed", "Fingerprint", "Scan", "ScanFace", "ScanEye",
-  "UserCheck", "UserCog", "UserX", "Ban", "ShieldClose",
-  "AlertCircle", "AlertTriangle", "AlertOctagon", "Info",
-  
-  // Utenti & Profili (30 icone)
-  "User", "User2", "Users", "Users2", "UserPlus", "UserMinus",
-  "UserCheck", "UserX", "UserCog", "UserCircle", "UserCircle2",
-  "UserSquare", "UserSquare2", "Contact", "Contact2", "IdCard",
-  "BadgeCheck", "BadgeAlert", "BadgeHelp", "BadgeInfo",
-  "Smile", "UserRound", "UserRoundCheck", "UserRoundCog",
-  "UserRoundMinus", "UserRoundPlus", "UserRoundSearch", "UserRoundX",
-  "UsersRound", "Baby",
-  
-  // Archiviazione & Cloud (35 icone)
-  "Archive", "ArchiveRestore", "ArchiveX", "Inbox", "InboxCheck",
-  "Cloud", "CloudCog", "CloudDownload", "CloudUpload", "CloudOff",
-  "CloudDrizzle", "CloudFog", "CloudHail", "CloudLightning",
-  "CloudMoon", "CloudMoonRain", "CloudRain", "CloudRainWind",
-  "CloudSnow", "CloudSun", "CloudSunRain",
-  "Server", "ServerCog", "ServerCrash", "ServerOff",
-  "Database", "DatabaseBackup", "DatabaseZap",
-  "HardDrive", "HardDriveDownload", "HardDriveUpload",
-  "Save", "SaveAll", "Download", "Upload",
-  
-  // Connettività & Dispositivi (45 icone)
-  "Wifi", "WifiOff", "Bluetooth", "BluetoothConnected", "BluetoothOff",
-  "BluetoothSearching", "Battery", "BatteryCharging", "BatteryFull",
-  "BatteryLow", "BatteryMedium", "BatteryWarning", "Power", "PowerOff",
-  "Zap", "ZapOff", "Smartphone", "Tablet", "Laptop", "Laptop2",
-  "Monitor", "MonitorOff", "MonitorSmartphone", "MonitorSpeaker",
-  "Watch", "Printer", "Cast", "Usb", "Cpu", "MemoryStick",
-  "HardDrive", "Keyboard", "Mouse", "MousePointer", "MousePointer2",
-  "Touchpad", "TouchpadOff", "Plug", "Plug2", "PlugZap",
-  "Cable", "Router", "Webcam", "Projector", "Tv",
-  
-  // Meteo & Natura (50 icone)
-  "Sun", "SunMoon", "SunDim", "SunMedium", "SunSnow",
-  "Moon", "MoonStar", "CloudRain", "CloudSnow", "CloudLightning",
-  "Cloudy", "CloudDrizzle", "CloudFog", "CloudHail",
-  "Sunrise", "Sunset", "Droplet", "Droplets", "Wind", "Tornado",
-  "Thermometer", "ThermometerSun", "ThermometerSnowflake", "Umbrella",
-  "Waves", "Rainbow", "Snowflake", "Flame",
-  "Leaf", "Sprout", "Trees", "TreePine", "TreeDeciduous",
-  "Flower", "Flower2", "Bug", "Bird", "Feather",
-  "Shell", "Turtle", "Rabbit", "Squirrel", "Dog", "Cat",
-  "Fish", "Bone", "Footprints", "Paw", "Egg",
-  
-  // Cibo & Bevande (45 icone)
-  "Coffee", "Beer", "Wine", "BeerOff", "WineOff",
-  "Pizza", "Apple", "Egg", "IceCream", "IceCream2",
-  "Cake", "CakeSlice", "Cookie", "Sandwich",
-  "UtensilsCrossed", "Utensils", "ForkKnife", "ChefHat",
-  "Soup", "Salad", "Beef", "Popcorn", "Candy", "CandyCane",
-  "Lollipop", "Milk", "MilkOff", "Glass", "GlassWater",
-  "CupSoda", "Martini", "Cherry", "Grape", "Banana",
-  "Citrus", "Strawberry", "Carrot", "Wheat", "Ham",
-  "Drumstick", "LeafyGreen", "Croissant", "Donut", "Dessert",
-  
-  // Trasporti & Viaggi (45 icone)
-  "MapPin", "MapPinned", "MapPinOff", "Map", "Navigation", "Navigation2",
-  "Compass", "Globe", "Globe2", "Plane", "PlaneTakeoff", "PlaneLanding",
-  "Car", "CarFront", "CarTaxiFront", "Truck", "Bus", "BusFront",
-  "Train", "TrainFront", "TrainTrack", "Bike", "Ship", "Sailboat",
-  "Anchor", "Luggage", "Backpack", "Tent", "Mountain", "MountainSnow",
-  "Palmtree", "Route", "RouteOff", "Milestone", "Signpost",
-  "Locate", "LocateFixed", "LocateOff", "Pin", "PinOff",
-  "Target", "Crosshair", "Focus", "Radar",
-  
-  // Educazione & Scienza (35 icone)
-  "GraduationCap", "School", "Library", "BookOpen", "BookMarked",
-  "Microscope", "FlaskConical", "FlaskRound", "TestTube", "TestTubes",
-  "TestTube2", "Atom", "Dna", "Brain", "BrainCircuit", "BrainCog",
-  "Lightbulb", "LightbulbOff", "Beaker", "Binary",
-  "Pi", "Sigma", "Infinity", "Equal", "Plus", "Minus",
-  "Divide", "X", "Asterisk", "Calculator", "Function",
-  "Variable", "Brackets", "Parentheses", "Pilcrow",
-  
-  // Salute & Medicina (30 icone)
-  "Heart", "HeartPulse", "HeartHandshake", "HeartCrack", "HeartOff",
-  "Pill", "Pills", "Syringe", "Stethoscope",
-  "Hospital", "Ambulance", "Cross", "Activity",
-  "Thermometer", "ThermometerSun", "ThermometerSnowflake",
-  "Microscope", "TestTube", "TestTubes", "Dna", "Brain",
-  "Bone", "Skull", "Bandage", "Tablets",
-  "CirclePlus", "CircleMinus", "FirstAid", "Bed", "BedDouble",
-  
-  // Sport & Fitness (25 icone)
-  "Dumbbell", "Weight", "Run", "Trophy", "Medal",
-  "Target", "Timer", "Stopwatch", "Flame", "Crown",
-  "Award", "Bike", "Football", "Goal", "Tennis",
-  "Volleyball", "Basketball", "Baseball", "Golf",
-  "Hockey", "Rugby", "TableTennis", "Badminton", "Boxing", "Karate",
-  
-  // Strumenti & Utensili (40 icone)
-  "Wrench", "Hammer", "Drill", "Screwdriver", "Pickaxe",
-  "Shovel", "Axe", "Saw", "Scissors", "Ruler", "RulerSquare",
-  "Pen", "Pencil", "PenTool", "PenLine", "Paintbrush", "PaintBucket",
-  "Palette", "Pipette", "Construction", "HardHat", "Cone",
-  "Barricade", "Fence", "Anvil", "Cog", "Settings2",
-  "Sliders", "SlidersHorizontal", "Nut", "Bolt",
-  "Combine", "Component", "Puzzle", "Magnet", "Stamp",
-  "Wand", "Wand2", "Eraser", "Brush",
-  
-  // Shopping & E-commerce (35 icone)
-  "ShoppingBag", "ShoppingBasket", "ShoppingCart", "Tag", "Tags",
-  "Ticket", "Package", "Package2", "Gift", "Store",
-  "QrCode", "Barcode", "ScanLine", "ScanBarcode",
-  "CreditCard", "BadgePercent", "Percent", "DollarSign",
-  "Receipt", "Wallet", "WalletCards", "CircleDollarSign",
-  "BadgeDollarSign", "Euro", "PoundSterling",
-  "TrendingUp", "TrendingDown", "BarChart", "ShoppingBag",
-  "PackageCheck", "PackagePlus", "PackageMinus", "PackageX", "PackageOpen", "PackageSearch",
-  
-  // Tempo & Calendario (35 icone)
+  // Time (40 icone)
   "Clock", "Clock1", "Clock2", "Clock3", "Clock4", "Clock5",
   "Clock6", "Clock7", "Clock8", "Clock9", "Clock10", "Clock11", "Clock12",
+  "ClockAlert", "ClockArrowDown", "ClockArrowUp",
   "Alarm", "AlarmClock", "AlarmClockCheck", "AlarmClockMinus",
-  "AlarmClockOff", "AlarmClockPlus", "AlarmCheck", "AlarmMinus",
-  "AlarmPlus", "AlarmSmoke", "Timer", "TimerOff", "TimerReset",
-  "Stopwatch", "Watch", "Hourglass", "History",
+  "AlarmClockOff", "AlarmClockPlus", "AlarmCheck", "AlarmMinus", "AlarmPlus",
+  "Timer", "TimerOff", "TimerReset", "Stopwatch",
+  "Watch", "Hourglass", "History", "HistoryIcon",
   "Calendar", "CalendarDays", "CalendarCheck", "CalendarCheck2",
   "CalendarX", "CalendarX2", "CalendarClock", "CalendarRange",
+  "CalendarArrowDown", "CalendarArrowUp", "CalendarCog", "CalendarFold",
+  "CalendarHeart", "CalendarMinus", "CalendarMinus2", "CalendarOff",
+  "CalendarPlus", "CalendarPlus2", "CalendarSearch",
   
-  // Emozioni & Reazioni (40 icone)
-  "Smile", "SmilePlus", "Laugh", "Grin", "Frown", "Meh",
-  "Annoyed", "Angry", "Confused", "Dizzy", "Surprised",
+  // ========== AZIONI E COMANDI ==========
+  
+  // Actions (35 icone)
+  "Download", "Upload", "DownloadCloud", "UploadCloud",
+  "Edit", "Edit2", "Edit3", "PenLine", "Pen", "PenTool", "Pencil", "PencilLine", "PencilRuler",
+  "Trash", "Trash2", "Delete", "Eraser",
+  "Check", "CheckCheck", "CheckCircle", "CheckCircle2", "CircleCheck", "CircleCheckBig",
+  "X", "XCircle", "XOctagon", "CircleX", "OctagonX",
+  "Plus", "PlusCircle", "PlusSquare", "CirclePlus", "SquarePlus",
+  "Minus", "MinusCircle", "MinusSquare", "CircleMinus", "SquareMinus",
+  
+  // Notifications (25 icone)
+  "Bell", "BellOff", "BellRing", "BellPlus", "BellMinus", "BellDot", "BellElectric",
+  "AlertCircle", "AlertTriangle", "AlertOctagon",
+  "Info", "HelpCircle", "HelpingHand", "CircleHelp",
+  "CheckCircle", "CheckCircle2", "XCircle", "XOctagon",
+  "BadgeCheck", "BadgeAlert", "BadgeX", "BadgeInfo", "BadgeHelp",
+  "Siren", "Megaphone",
+  
+  // ========== TRASPORTI E VIAGGI ==========
+  
+  // Transportation (40 icone)
+  "Car", "CarFront", "CarTaxiFront", "Truck", "Bus", "BusFront",
+  "Train", "TrainFront", "TrainTrack", "TramFront",
+  "Bike", "Ship", "Sailboat", "Boat", "Anchor",
+  "Plane", "PlaneTakeoff", "PlaneLanding",
+  "Rocket", "RocketIcon",
+  "Fuel", "ParkingCircle", "ParkingCircleOff", "ParkingMeter", "ParkingSquare", "ParkingSquareOff",
+  "Construction", "Cone", "HardHat", "Barricade",
+  "Luggage", "Backpack", "Tent", "TentTree", "Caravan", "Fence",
+  "TrafficCone", "Ambulance", "Siren",
+  
+  // Location (30 icone)
+  "MapPin", "MapPinned", "MapPinOff", "MapPinPlus", "MapPinMinus", "MapPinCheck", "MapPinX",
+  "Map", "MapIcon",
+  "Navigation", "Navigation2", "NavigationOff",
+  "Compass", "Locate", "LocateFixed", "LocateOff",
+  "Pin", "PinOff", "Target", "Crosshair", "Focus",
+  "Globe", "Globe2", "GlobeLock", "Earth", "EarthLock",
+  "Mountain", "MountainSnow", "Palmtree", "TreePine", "TreeDeciduous", "Trees",
+  
+  // ========== STRUMENTI ==========
+  
+  // Tools (40 icone)
+  "Wrench", "Hammer", "Drill", "Screwdriver", "Pickaxe",
+  "Shovel", "Axe", "Saw", "Scissors", "ScissorsLineDashed",
+  "Ruler", "RulerIcon",
+  "Paintbrush", "PaintBucket", "PaintbrushVertical", "Palette", "Pipette",
+  "Construction", "HardHat", "Cone", "Anvil",
+  "Cog", "Settings", "Settings2", "SlidersHorizontal", "SlidersVertical",
+  "Nut", "Combine", "Component", "Puzzle",
+  "Magnet", "Stamp", "Wand", "Wand2", "WandSparkles",
+  "Brush", "Crop", "Frame", "Aperture",
+  "Loader", "Loader2", "LoaderCircle", "LoaderPinwheel",
+  
+  // ========== SHOPPING ==========
+  
+  // Shopping (30 icone)
+  "ShoppingBag", "ShoppingBasket", "ShoppingCart",
+  "Tag", "Tags", "Ticket", "TicketCheck", "TicketMinus", "TicketPercent",
+  "TicketPlus", "TicketSlash", "TicketX",
+  "Package", "Package2", "Gift", "GiftIcon", "Store", "Storefront",
+  "QrCode", "Barcode", "ScanLine", "ScanBarcode",
+  "CreditCard", "BadgePercent", "Percent", "DollarSign",
+  "Receipt", "ReceiptText", "Wallet", "WalletCards",
+  
+  // ========== NATURA E METEO ==========
+  
+  // Weather (35 icone)
+  "Sun", "SunMoon", "SunDim", "SunMedium", "SunSnow",
+  "Moon", "MoonStar",
+  "Cloud", "CloudRain", "CloudSnow", "CloudLightning", "Cloudy",
+  "CloudDrizzle", "CloudFog", "CloudHail", "CloudMoonRain", "CloudSunRain",
+  "Sunrise", "Sunset", "Droplet", "Droplets",
+  "Wind", "Tornado", "Thermometer", "ThermometerSun", "ThermometerSnowflake",
+  "Umbrella", "UmbrellaOff", "Waves", "Rainbow", "Snowflake", "Flame",
+  "Haze", "Hurricane", "Cloudy",
+  
+  // Nature (30 icone)
+  "Leaf", "LeafyGreen", "Sprout", "Clover",
+  "Trees", "TreePine", "TreeDeciduous", "TreePalm",
+  "Flower", "Flower2", "Cherry", "Grape", "Banana", "Apple", "Citrus", "Strawberry",
+  "Bug", "Snail", "Bird", "Feather",
+  "Fish", "Shell", "Turtle", "Rabbit", "Squirrel", "Dog", "Cat",
+  "Bone", "Footprints", "Paw",
+  
+  // ========== CIBO ==========
+  
+  // Food & Drinks (35 icone)
+  "Coffee", "Beer", "Wine", "BeerOff", "WineOff",
+  "Pizza", "Apple", "Egg", "EggFried", "EggOff",
+  "IceCream", "IceCreamBowl", "IceCreamCone",
+  "Cake", "CakeSlice", "Cookie", "Sandwich",
+  "UtensilsCrossed", "Utensils", "ChefHat",
+  "Soup", "Salad", "Beef", "Ham", "Drumstick",
+  "Popcorn", "Candy", "CandyCane", "Lollipop",
+  "Milk", "MilkOff", "GlassWater", "CupSoda", "Martini",
+  "Croissant", "Donut", "Wheat", "Carrot",
+  
+  // ========== SPORT ==========
+  
+  // Sports & Fitness (25 icone)
+  "Dumbbell", "Trophy", "Medal", "Award",
+  "Target", "Timer", "Stopwatch", "Flame", "Crown",
+  "Bike", "Footprints",
+  "Goal", "Volleyball", "Basketball", "Baseball", "Tennis",
+  "Swords", "Sword", "ShieldCheck",
+  "Heart", "HeartPulse", "Activity",
+  "PersonStanding", "Accessibility", "Armchair",
+  
+  // ========== SALUTE ==========
+  
+  // Health (25 icone)
+  "Heart", "HeartPulse", "HeartHandshake", "HeartCrack", "HeartOff",
+  "Pill", "Syringe", "Stethoscope",
+  "Hospital", "Ambulance", "Cross", "Activity", "ActivitySquare",
+  "Thermometer", "ThermometerSun", "ThermometerSnowflake",
+  "Microscope", "TestTube", "TestTubes", "Dna", "Brain",
+  "Bone", "Skull", "Bandage",
+  "BedDouble", "BedSingle",
+  
+  // ========== EMOJI E REAZIONI ==========
+  
+  // Emotions (30 icone)
+  "Smile", "SmilePlus", "Laugh", "Frown", "Meh",
+  "Annoyed", "Angry", "Confused",
   "ThumbsUp", "ThumbsDown", "Heart", "HeartHandshake",
   "Star", "StarHalf", "StarOff", "Sparkles", "Sparkle",
   "PartyPopper", "Flame", "Ghost", "Skull", "Crown",
-  "Diamond", "Gem", "Rocket", "Zap", "Award", "Trophy",
-  "Medal", "Flag", "Bookmark", "BookmarkCheck", "BookmarkMinus",
-  "BookmarkPlus", "BookmarkX", "MessageHeart", "Cake", "Gift",
+  "Diamond", "Gem", "Rocket", "Zap",
+  "Flag", "Bookmark", "BookmarkCheck", "BookmarkMinus", "BookmarkPlus",
   
-  // Azioni & Comandi (30 icone)
-  "Play", "PlayCircle", "PlaySquare", "Pause", "PauseCircle", "PauseOctagon",
-  "Stop", "StopCircle", "SkipForward", "SkipBack", "FastForward", "Rewind",
-  "Repeat", "Repeat1", "Repeat2", "Shuffle", "RotateCw", "RotateCcw",
-  "RefreshCw", "RefreshCcw", "Power", "PowerOff",
-  "Maximize", "Minimize", "Maximize2", "Minimize2",
-  "Volume", "Volume1", "Volume2", "VolumeX",
+  // ========== GAMING ==========
   
-  // Notifiche & Alert (25 icone)
-  "Bell", "BellOff", "BellRing", "BellPlus", "BellMinus",
-  "AlertCircle", "AlertTriangle", "AlertOctagon",
-  "Info", "HelpCircle", "HelpingHand",
-  "CheckCircle", "CheckCircle2", "XCircle", "XOctagon",
-  "BadgeCheck", "BadgeAlert", "BadgeX", "BadgeInfo",
-  "BadgeHelp", "CircleAlert", "CircleCheck", "CircleX",
-  "OctagonAlert", "TriangleAlert",
-  
-  // Gaming & Intrattenimento (35 icone)
+  // Gaming (20 icone)
   "Gamepad", "Gamepad2", "Joystick", "Dices",
   "Dice1", "Dice2", "Dice3", "Dice4", "Dice5", "Dice6",
   "Puzzle", "Sword", "Swords", "Shield", "ShieldCheck",
   "Trophy", "Medal", "Award", "Target", "Crosshair",
-  "Focus", "Sparkles", "Wand2", "Ghost", "Skull",
-  "Crown", "Flame", "Rocket", "Zap", "PartyPopper",
-  "Clapper", "Film", "Ticket", "Popcorn", "Flag",
   
-  // Code & Development (50 icone)
-  "Code", "Code2", "CodeSquare", "Brackets", "Braces",
-  "Terminal", "TerminalSquare", "Bug", "BugOff", "BugPlay",
-  "Binary", "FileCode", "FileCode2", "FolderCode",
-  "Regex", "Variable", "Function", "Component",
-  "Package", "PackageCheck", "PackageMinus", "PackagePlus", "PackageX",
-  "PackageOpen", "PackageSearch", "Boxes", "Container",
-  "Layers", "Layers2", "Layers3", "Puzzle", "Plugin",
-  "Webhook", "Api", "Database", "DatabaseBackup", "DatabaseZap",
-  "Server", "ServerCog", "ServerCrash", "ServerOff",
-  "HardDrive", "HardDriveDownload", "HardDriveUpload",
-  "Cpu", "MemoryStick", "GitBranch", "GitCommit", "GitPullRequest",
-  "GitMerge", "Github", "Gitlab",
+  // ========== MISC ==========
   
-  // Text & Typography (35 icone)
-  "Type", "Heading", "Heading1", "Heading2", "Heading3",
-  "Heading4", "Heading5", "Heading6", "TextCursor", "TextCursorInput",
-  "TextQuote", "TextSelect", "Quote", "Pilcrow",
-  "Strikethrough", "Underline", "Bold", "Italic",
-  "AlignLeft", "AlignCenter", "AlignRight", "AlignJustify",
-  "ListOrdered", "ListChecks", "ListPlus", "ListMinus", "ListX",
-  "Indent", "Outdent", "WrapText", "RemoveFormatting",
-  "CaseSensitive", "CaseUpper", "CaseLower", "ALargeSmall",
-  
-  // Accessibility & Inclusion (20 icone)
-  "Accessibility", "EarOff", "Ear", "Eye", "EyeOff", "EyeClosed",
-  "Glasses", "Languages", "Speech", "Subtitles",
-  "ALargeSmall", "CaseSensitive", "CaseUpper", "CaseLower",
-  "Volume", "Volume1", "Volume2", "VolumeX", "Mic", "MicOff",
-  
-  // Misc & Varie (30 icone)
-  "Trash", "Trash2", "Delete", "Eraser",
-  "Mail", "MailOpen", "Send", "Reply", "Forward",
-  "Bookmark", "BookmarkCheck", "BookmarkPlus",
-  "Pin", "PinOff", "Paperclip", "Unplug",
+  // Miscellaneous (30 icone)
+  "Hash", "Asterisk", "AtSign", "Command",
+  "Paperclip", "Unplug", "Pin", "PinOff",
   "Loader", "Loader2", "LoaderCircle",
   "CircleDashed", "CircleDot", "CircleDotDashed",
-  "Separator", "GripHorizontal", "GripVertical",
-  "MoreHorizontal", "MoreVertical", "Ellipsis",
-  "EllipsisVertical", "Command",
+  "GripHorizontal", "GripVertical", "Grip",
+  "MoreHorizontal", "MoreVertical", "Ellipsis", "EllipsisVertical",
+  "Space", "SquareAsterisk", "SquareSlash",
+  "Asterisk", "Hash", "Quote", "TextQuote",
+  "HandMetal", "Hand", "Handshake", "Pointer", "PointerOff",
 ]));
 
 export const IconPicker = ({ value, onChange }: IconPickerProps) => {
@@ -360,8 +498,9 @@ export const IconPicker = ({ value, onChange }: IconPickerProps) => {
                     ? "border-primary bg-primary/10"
                     : "border-transparent"
                 }`}
+                title={iconName}
               >
-                <IconComponent className="w-6 h-6 mx-auto" />
+                <IconComponent className="h-5 w-5 mx-auto" />
               </button>
             );
           })}
@@ -369,10 +508,9 @@ export const IconPicker = ({ value, onChange }: IconPickerProps) => {
       </ScrollArea>
 
       {value && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Selezionata:</span>
-          <span className="font-medium">{value}</span>
-        </div>
+        <p className="text-sm text-muted-foreground text-center">
+          Selezionata: <span className="font-medium">{value}</span>
+        </p>
       )}
     </div>
   );
