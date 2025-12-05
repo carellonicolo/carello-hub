@@ -221,7 +221,8 @@ const Index = () => {
 
     <main className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 pb-20 pt-24 md:pt-0">
       {/* Title Section */}
-      <div className="text-center mb-8 md:mb-16 animate-fade-in">
+      {/* Title Section - No animation on LCP element for faster render */}
+      <div className="text-center mb-8 md:mb-16">
         <h1 className="text-4xl md:text-7xl font-bold tracking-tight text-foreground drop-shadow-2xl mb-1 md:mb-2">
           Prof. Carello
         </h1>
