@@ -219,7 +219,7 @@ const Index = () => {
 
     <StatusBar />
 
-    <main className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 pb-20 pt-12 md:pt-0">
+    <main className="relative z-10 min-h-screen flex flex-col items-center justify-start md:justify-center px-6 pb-20 pt-20 md:pt-0">
       {/* Title Section */}
       {/* Title Section - No animation on LCP element for faster render */}
       <div className="text-center mb-4 md:mb-16">
