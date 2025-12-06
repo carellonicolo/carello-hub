@@ -219,7 +219,7 @@ const Index = () => {
 
     <StatusBar />
 
-    <main className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 pb-20 pt-16 md:pt-0">
+    <main className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 pb-20 pt-12 md:pt-0">
       {/* Title Section */}
       {/* Title Section - No animation on LCP element for faster render */}
       <div className="text-center mb-4 md:mb-16">
@@ -229,7 +229,7 @@ const Index = () => {
         <p className="text-xl md:text-2xl font-semibold text-foreground/90 drop-shadow-lg">
           APP - DASHBOARD
         </p>
-        <p className="text-sm md:text-base font-normal text-foreground/70 drop-shadow-lg mt-2 md:mt-4 max-w-lg text-center px-4">
+        <p className="hidden md:block text-sm md:text-base font-normal text-foreground/70 drop-shadow-lg mt-2 md:mt-4 max-w-lg text-center px-4">
           Professore abilitato per la scuola superiore ai sensi dell'art. 3 comma 8 del D.M 205/2023 – D.D.G. 3059/2024
         </p>
       </div>
