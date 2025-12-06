@@ -303,7 +303,7 @@ const Index = () => {
     <ProjectInfoButton />
 
     {/* Footer with email */}
-    <footer className="fixed bottom-[18px] md:bottom-[26px] left-1/2 -translate-x-1/2 z-40">
+    <footer className="fixed bottom-[22px] md:bottom-[26px] left-1/2 -translate-x-1/2 z-40">
       <a
         href="mailto:info@nicolocarello.it"
         className="text-foreground/60 hover:text-foreground text-sm transition-colors duration-200 drop-shadow-md backdrop-blur-sm bg-background/20 px-3 py-1.5 rounded-lg hover:bg-background/30"
