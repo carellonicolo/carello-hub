@@ -61,7 +61,7 @@ const StatusBar = () => {
         </div>
       </div>
 
-      {!user && <Button size="icon" variant="ghost" onClick={() => navigate("/auth")} className="fixed bottom-6 right-6 z-[100] text-foreground/60 hover:text-foreground cursor-pointer" title="Login Admin">
+      {!user && <Button size="icon" variant="ghost" onClick={() => navigate("/auth")} className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] text-foreground/60 hover:text-foreground cursor-pointer" title="Login Admin">
           <Lock className="h-5 w-5" />
         </Button>}
 
