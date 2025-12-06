@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Info } from "lucide-react";
+import { Info, Github } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,8 +14,8 @@ const ProjectInfoButton = () => {
 
   return (
     <>
-      {/* Floating button in bottom left - always visible, expands on hover (desktop only) */}
-      <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-50">
+      {/* Floating buttons in bottom left - always visible */}
+      <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-50 flex items-center gap-2">
         <Button
           onClick={() => setIsOpen(true)}
           className="group shadow-2xl bg-primary/90 hover:bg-primary backdrop-blur-sm transition-all duration-300 ease-out hover:scale-105 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
@@ -25,6 +25,19 @@ const ProjectInfoButton = () => {
           <span className="hidden md:inline md:max-w-0 md:overflow-hidden md:group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">
             Scopri il Progetto
           </span>
+        </Button>
+        
+        <Button
+          asChild
+          className="group shadow-2xl bg-foreground/10 hover:bg-foreground/20 backdrop-blur-sm transition-all duration-300 ease-out hover:scale-105 border border-foreground/20"
+          size="lg"
+        >
+          <a href="https://github.com/carellonicolo/carello-hub" target="_blank" rel="noopener noreferrer">
+            <Github className="h-5 w-5 md:group-hover:mr-2 transition-all duration-300" />
+            <span className="hidden md:inline md:max-w-0 md:overflow-hidden md:group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">
+              GitHub
+            </span>
+          </a>
         </Button>
       </div>
 
