@@ -14,15 +14,15 @@ const ProjectInfoButton = () => {
 
   return (
     <>
-      {/* Floating button in bottom left - always visible, expands on hover */}
-      <div className="fixed bottom-8 left-8 z-50">
+      {/* Floating button in bottom left - always visible, expands on hover (desktop only) */}
+      <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-50">
         <Button
           onClick={() => setIsOpen(true)}
           className="group shadow-2xl bg-primary/90 hover:bg-primary backdrop-blur-sm transition-all duration-300 ease-out hover:scale-105 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
           size="lg"
         >
-          <Info className="h-5 w-5 group-hover:mr-2 transition-all duration-300" />
-          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">
+          <Info className="h-5 w-5 md:group-hover:mr-2 transition-all duration-300" />
+          <span className="hidden md:inline md:max-w-0 md:overflow-hidden md:group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">
             Scopri il Progetto
           </span>
         </Button>
