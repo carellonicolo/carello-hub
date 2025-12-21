@@ -87,12 +87,12 @@ export const useApps = () => {
   const reorderAppsMutation = useMutation({
     mutationFn: async (reorderedApps: App[]) => {
       console.log('🔧 mutationFn chiamata con', reorderedApps.length, 'apps');
-      
+
       // ✅ Esegui update in SEQUENZA per evitare race conditions
       for (let index = 0; index < reorderedApps.length; index++) {
         const app = reorderedApps[index];
         console.log(`📝 Aggiornando ${app.name} a posizione ${index}`);
-        
+
         const { data, error } = await supabase
           .from("apps")
           .update({ position: index })

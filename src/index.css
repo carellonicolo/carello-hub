@@ -78,6 +78,8 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     font-display: optional;
+    overflow: hidden;
+    user-select: none;
   }
 
   /* Performance optimization: reduce paint area for LCP element */

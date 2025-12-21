@@ -46,18 +46,19 @@ const DraggableAppIcon = ({ app, index }: DraggableAppIconProps) => {
   } = useSortable({
     id: app.id,
     transition: {
-      duration: 400,
-      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      duration: 500,
+      easing: 'cubic-bezier(0.18, 0.89, 0.32, 1.28)', // Springy easing
     },
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: transition || 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-    opacity: isDragging ? 0 : 1,
+    transition: transition || 'transform 500ms cubic-bezier(0.18, 0.89, 0.32, 1.28)',
+    opacity: isDragging ? 0.3 : 1, // Slightly visible placeholder
     zIndex: isDragging ? 0 : 1,
-    willChange: 'transform',
-    animationDelay: `${index * 0.1}s`,
+    scale: isDragging ? '0.95' : '1',
+    willChange: 'transform, opacity, scale',
+    animationDelay: `${index * 0.05}s`, // Faster entry
     animationFillMode: 'both' as const,
   };
 
@@ -115,7 +116,7 @@ const Index = () => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // Piccolo movimento necessario per iniziare il drag
+        distance: 5, // More permissive for immediate feel
       },
     }),
     useSensor(KeyboardSensor, {
@@ -135,17 +136,11 @@ const Index = () => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      if (dragOverTimeoutRef.current) {
-        clearTimeout(dragOverTimeoutRef.current);
-      }
-
-      dragOverTimeoutRef.current = setTimeout(() => {
-        setLocalApps((items) => {
-          const oldIndex = items.findIndex((item) => item.id === active.id);
-          const newIndex = items.findIndex((item) => item.id === over.id);
-          return arrayMove(items, oldIndex, newIndex);
-        });
-      }, 16);
+      setLocalApps((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
     }
   };
 
@@ -199,6 +194,11 @@ const Index = () => {
       console.log('⚪ Nessun cambio, reset dello stato');
       setActiveApp(null);
     }
+  };
+
+  const dropAnimationConfig = {
+    duration: 450,
+    easing: 'cubic-bezier(0.18, 0.89, 0.32, 1.28)',
   };
 
   const measuringConfig = {
@@ -261,15 +261,18 @@ const Index = () => {
             </div>
           </SortableContext>
 
-          <DragOverlay dropAnimation={null}>
+          <DragOverlay
+            dropAnimation={dropAnimationConfig}
+            adjustScale={true}
+          >
             {activeApp ? (
               <div
                 className="cursor-grabbing"
                 style={{
-                  transform: 'scale(1.08) rotate(2deg)',
-                  opacity: 0.95,
-                  filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5))',
-                  transition: 'all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transform: 'scale(1.1) rotate(3deg)',
+                  opacity: 0.9,
+                  filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.4))',
+                  transition: 'all 300ms cubic-bezier(0.18, 0.89, 0.32, 1.28)',
                 }}
               >
                 <AppIcon
