@@ -125,9 +125,10 @@ export const AppManagementSheet = ({
       await moveAppsToFolder({ appIds: selectedAppIds, folderId: editingFolder.id });
     } else {
       // Create folder first, then assign apps
-      addFolder(data);
-      // Note: We need to wait for folder to be created to assign apps
-      // This is handled by the onSuccess callback in useFolders
+      const newFolder = await addFolder(data);
+      if (newFolder && selectedAppIds.length > 0) {
+        await moveAppsToFolder({ appIds: selectedAppIds, folderId: newFolder.id });
+      }
     }
   };
 
