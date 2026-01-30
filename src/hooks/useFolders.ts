@@ -34,11 +34,14 @@ export const useFolders = () => {
   const addFolderMutation = useMutation({
     mutationFn: async (folderData: FolderFormData) => {
       const position = folders.length;
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("folders")
-        .insert({ ...folderData, position });
+        .insert({ ...folderData, position })
+        .select()
+        .single();
 
       if (error) throw error;
+      return data as Folder;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
@@ -115,7 +118,7 @@ export const useFolders = () => {
   return {
     folders,
     isLoading,
-    addFolder: addFolderMutation.mutate,
+    addFolder: addFolderMutation.mutateAsync,
     updateFolder: updateFolderMutation.mutate,
     deleteFolder: deleteFolderMutation.mutate,
     reorderFolders: reorderFoldersMutation.mutateAsync,
