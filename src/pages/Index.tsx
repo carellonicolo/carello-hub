@@ -1,8 +1,11 @@
 import StatusBar from "@/components/StatusBar";
 import AppIcon from "@/components/AppIcon";
+import FolderIcon from "@/components/FolderIcon";
+import FolderModal from "@/components/FolderModal";
 import ProjectInfoButton from "@/components/ProjectInfoButton";
 import backgroundImage from "@/assets/dashboard-background.jpg";
 import { useApps, App } from "@/hooks/useApps";
+import { useFolders, Folder } from "@/hooks/useFolders";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useResponsiveColumns } from "@/hooks/useResponsiveColumns";
 import { useState, useEffect, useRef, useMemo } from "react";
@@ -28,6 +31,11 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+
+// Type for combined grid items
+type GridItem = 
+  | { type: 'app'; data: App }
+  | { type: 'folder'; data: Folder };
 
 // Draggable App Icon component for admin users
 interface DraggableAppIconProps {
@@ -86,6 +94,7 @@ const Index = () => {
     isLoading,
     reorderApps
   } = useApps();
+  const { folders } = useFolders();
   const { isAdmin } = useIsAdmin();
   const columns = useResponsiveColumns();
   const [activeApp, setActiveApp] = useState<App | null>(null);
@@ -93,6 +102,25 @@ const Index = () => {
   const [isMutating, setIsMutating] = useState(false);
   const isProcessingDrag = useRef(false);
   const dragOverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [openFolder, setOpenFolder] = useState<Folder | null>(null);
+
+  // Filter apps that are not in any folder (for main grid)
+  const appsNotInFolder = useMemo(() => 
+    apps.filter(app => !app.folder_id), 
+    [apps]
+  );
+
+  const localAppsNotInFolder = useMemo(() => 
+    localApps.filter(app => !app.folder_id), 
+    [localApps]
+  );
+
+  // Get apps inside a specific folder
+  const getAppsInFolder = (folderId: string) => {
+    return apps
+      .filter(app => app.folder_id === folderId)
+      .sort((a, b) => a.position_in_folder - b.position_in_folder);
+  };
 
   // Memoize hash calculation to avoid recalculating on every render
   const serverHash = useMemo(() =>
@@ -235,7 +263,7 @@ const Index = () => {
       </div>
 
       {/* Apps Grid */}
-      {isLoading ? <div className="text-foreground/80 text-lg">Caricamento...</div> : apps.length === 0 ? <div className="text-center text-foreground/80">
+      {isLoading ? <div className="text-foreground/80 text-lg">Caricamento...</div> : (appsNotInFolder.length === 0 && folders.length === 0) ? <div className="text-center text-foreground/80">
         <p className="text-lg mb-2">Nessuna app configurata</p>
         <p className="text-sm">Clicca sull'icona impostazioni in alto per iniziare</p>
       </div> : isAdmin ? (
@@ -248,15 +276,29 @@ const Index = () => {
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={localApps.map((app) => app.id)}
+            items={localAppsNotInFolder.map((app) => app.id)}
             strategy={rectSortingStrategy}
           >
             <div
               className="grid gap-4 md:gap-8 lg:gap-12 animate-scale-in"
               style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
             >
-              {localApps.map((app, index) => (
-                <DraggableAppIcon key={app.id} app={app} index={index} />
+              {/* Render folders first */}
+              {folders.map((folder, index) => (
+                <div key={folder.id} className="animate-fade-in" style={{
+                  animationDelay: `${index * 0.05}s`,
+                  animationFillMode: 'both'
+                }}>
+                  <FolderIcon 
+                    folder={folder} 
+                    apps={getAppsInFolder(folder.id)}
+                    onClick={() => setOpenFolder(folder)}
+                  />
+                </div>
+              ))}
+              {/* Render apps not in folders */}
+              {localAppsNotInFolder.map((app, index) => (
+                <DraggableAppIcon key={app.id} app={app} index={folders.length + index} />
               ))}
             </div>
           </SortableContext>
@@ -290,9 +332,23 @@ const Index = () => {
           className="grid gap-4 md:gap-8 lg:gap-12 animate-scale-in"
           style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
         >
-          {apps.map((app, index) => (
-            <div key={app.id} className="animate-fade-in" style={{
+          {/* Render folders first */}
+          {folders.map((folder, index) => (
+            <div key={folder.id} className="animate-fade-in" style={{
               animationDelay: `${index * 0.1}s`,
+              animationFillMode: 'both'
+            }}>
+              <FolderIcon 
+                folder={folder} 
+                apps={getAppsInFolder(folder.id)}
+                onClick={() => setOpenFolder(folder)}
+              />
+            </div>
+          ))}
+          {/* Render apps not in folders */}
+          {appsNotInFolder.map((app, index) => (
+            <div key={app.id} className="animate-fade-in" style={{
+              animationDelay: `${(folders.length + index) * 0.1}s`,
               animationFillMode: 'both'
             }}>
               <AppIcon iconName={app.icon_name} label={app.name} href={app.href} color={app.color} />
@@ -301,6 +357,14 @@ const Index = () => {
         </div>
       )}
     </main>
+
+    {/* Folder Modal */}
+    <FolderModal 
+      open={!!openFolder}
+      onOpenChange={(open) => !open && setOpenFolder(null)}
+      folder={openFolder}
+      apps={openFolder ? getAppsInFolder(openFolder.id) : []}
+    />
 
     {/* Project Info Button - appears on hover in bottom left */}
     <ProjectInfoButton />

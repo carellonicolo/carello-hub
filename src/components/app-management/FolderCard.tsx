@@ -1,19 +1,17 @@
-import { GripVertical, Pencil, Trash2 } from "lucide-react";
-import * as Icons from "lucide-react";
-import type { LucideProps } from "lucide-react";
+import { GripVertical, Pencil, Trash2, Folder } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { App } from "@/hooks/useApps";
+import { Folder as FolderType } from "@/hooks/useFolders";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-interface AppCardProps {
-  app: App;
-  folderName?: string;
+interface FolderCardProps {
+  folder: FolderType;
+  appCount: number;
   onEdit: () => void;
   onDelete: () => void;
 }
 
-export const AppCard = ({ app, folderName, onEdit, onDelete }: AppCardProps) => {
+export const FolderCard = ({ folder, appCount, onEdit, onDelete }: FolderCardProps) => {
   const {
     attributes,
     listeners,
@@ -21,15 +19,13 @@ export const AppCard = ({ app, folderName, onEdit, onDelete }: AppCardProps) => 
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: app.id });
+  } = useSortable({ id: folder.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
-
-  const IconComponent = Icons[app.icon_name as keyof typeof Icons] as React.ComponentType<LucideProps>;
 
   return (
     <div
@@ -47,21 +43,16 @@ export const AppCard = ({ app, folderName, onEdit, onDelete }: AppCardProps) => 
 
       <div
         className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-        style={{ background: app.color }}
+        style={{ background: folder.color }}
       >
-        {IconComponent && <IconComponent className="w-6 h-6 text-white" />}
+        <Folder className="w-6 h-6 text-white" />
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <p className="font-medium truncate">{app.name}</p>
-          {folderName && (
-            <span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-              📁 {folderName}
-            </span>
-          )}
-        </div>
-        <p className="text-sm text-muted-foreground truncate">{app.href}</p>
+        <p className="font-medium truncate">{folder.name}</p>
+        <p className="text-sm text-muted-foreground">
+          {appCount} {appCount === 1 ? 'app' : 'app'}
+        </p>
       </div>
 
       <div className="flex gap-1">

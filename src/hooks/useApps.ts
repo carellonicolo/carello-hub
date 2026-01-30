@@ -9,6 +9,8 @@ export interface App {
   href: string;
   color: string;
   position: number;
+  folder_id: string | null;
+  position_in_folder: number;
 }
 
 export interface AppFormData {
@@ -136,12 +138,41 @@ export const useApps = () => {
     },
   });
 
+  const moveAppsToFolderMutation = useMutation({
+    mutationFn: async ({ appIds, folderId }: { appIds: string[]; folderId: string | null }) => {
+      // First, remove all apps from this folder
+      if (folderId) {
+        const { error: clearError } = await supabase
+          .from("apps")
+          .update({ folder_id: null, position_in_folder: 0 })
+          .eq("folder_id", folderId);
+        if (clearError) throw clearError;
+      }
+
+      // Then, add selected apps to the folder
+      for (let i = 0; i < appIds.length; i++) {
+        const { error } = await supabase
+          .from("apps")
+          .update({ folder_id: folderId, position_in_folder: i })
+          .eq("id", appIds[i]);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["apps"] });
+    },
+    onError: () => {
+      toast({ title: "Errore durante l'aggiornamento", variant: "destructive" });
+    },
+  });
+
   return {
     apps,
     isLoading,
     addApp: addAppMutation.mutate,
     updateApp: updateAppMutation.mutate,
     deleteApp: deleteAppMutation.mutate,
-    reorderApps: reorderAppsMutation.mutateAsync,  // ✅ Usa mutateAsync per poter fare await
+    reorderApps: reorderAppsMutation.mutateAsync,
+    moveAppsToFolder: moveAppsToFolderMutation.mutateAsync,
   };
 };

@@ -18,17 +18,57 @@ export type Database = {
         Row: {
           color: string
           created_at: string
+          folder_id: string | null
           href: string
           icon_name: string
           id: string
           name: string
           position: number
+          position_in_folder: number | null
         }
         Insert: {
           color: string
           created_at?: string
+          folder_id?: string | null
           href: string
           icon_name: string
+          id?: string
+          name: string
+          position: number
+          position_in_folder?: number | null
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          folder_id?: string | null
+          href?: string
+          icon_name?: string
+          id?: string
+          name?: string
+          position?: number
+          position_in_folder?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "apps_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      folders: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          position: number
+        }
+        Insert: {
+          color?: string
+          created_at?: string
           id?: string
           name: string
           position: number
@@ -36,8 +76,6 @@ export type Database = {
         Update: {
           color?: string
           created_at?: string
-          href?: string
-          icon_name?: string
           id?: string
           name?: string
           position?: number
