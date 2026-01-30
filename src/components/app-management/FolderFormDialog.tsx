@@ -61,20 +61,23 @@ export const FolderFormDialog = ({
   });
 
   useEffect(() => {
-    if (editingFolder) {
-      form.reset({
-        name: editingFolder.name,
-        color: editingFolder.color,
-        selectedApps: appsInFolder,
-      });
-    } else {
-      form.reset({
-        name: "",
-        color: "hsl(217, 91%, 60%)",
-        selectedApps: [],
-      });
+    if (open) {
+      if (editingFolder) {
+        form.reset({
+          name: editingFolder.name,
+          color: editingFolder.color,
+          selectedApps: appsInFolder,
+        });
+      } else {
+        form.reset({
+          name: "",
+          color: "hsl(217, 91%, 60%)",
+          selectedApps: [],
+        });
+      }
     }
-  }, [editingFolder, form, appsInFolder]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, editingFolder?.id]);
 
   const handleSubmit = (data: FolderFormValues) => {
     onSubmit(
