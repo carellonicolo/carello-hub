@@ -120,12 +120,13 @@ export const AppManagementSheet = ({
   };
 
   const handleFolderFormSubmit = async (data: FolderFormData, selectedAppIds: string[]) => {
+    console.log('📁 handleFolderFormSubmit - editing:', !!editingFolder, 'selectedApps:', selectedAppIds);
     if (editingFolder) {
       updateFolder({ id: editingFolder.id, data });
       await moveAppsToFolder({ appIds: selectedAppIds, folderId: editingFolder.id });
     } else {
-      // Create folder first, then assign apps
       const newFolder = await addFolder(data);
+      console.log('📁 Nuova cartella creata:', newFolder);
       if (newFolder && selectedAppIds.length > 0) {
         await moveAppsToFolder({ appIds: selectedAppIds, folderId: newFolder.id });
       }
