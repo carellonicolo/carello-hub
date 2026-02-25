@@ -11,7 +11,7 @@ import { useResponsiveColumns } from "@/hooks/useResponsiveColumns";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
   DndContext,
-  pointerWithin,
+  closestCenter,
   MeasuringStrategy,
   KeyboardSensor,
   PointerSensor,
@@ -19,7 +19,6 @@ import {
   useSensors,
   DragEndEvent,
   DragStartEvent,
-  DragOverEvent,
   DragOverlay,
 } from "@dnd-kit/core";
 import {
@@ -148,31 +147,30 @@ const Index = () => {
     if (item) setActiveItem(item);
   };
 
-  const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    setLocalItems(items => {
-      const oldIndex = items.findIndex(i => i.sortableId === String(active.id));
-      const newIndex = items.findIndex(i => i.sortableId === String(over.id));
-      if (oldIndex === -1 || newIndex === -1) return items;
-      return arrayMove(items, oldIndex, newIndex);
-    });
-  };
-
-  const handleDragEnd = async (_event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     if (isProcessingDrag.current) return;
 
-    if (!activeItem) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) {
       setActiveItem(null);
       return;
     }
 
+    const oldIndex = localItems.findIndex(i => i.sortableId === String(active.id));
+    const newIndex = localItems.findIndex(i => i.sortableId === String(over.id));
+
+    if (oldIndex === -1 || newIndex === -1) {
+      setActiveItem(null);
+      return;
+    }
+
+    const nextItems = arrayMove(localItems, oldIndex, newIndex);
+    setLocalItems(nextItems);
     isProcessingDrag.current = true;
 
     // Extract new folder order and app order from unified list
-    const newFolderOrder = localItems.filter(i => i.type === "folder").map(i => i.data as Folder);
-    const newAppOrder = localItems.filter(i => i.type === "app").map(i => i.data as App);
+    const newFolderOrder = nextItems.filter(i => i.type === "folder").map(i => i.data as Folder);
+    const newAppOrder = nextItems.filter(i => i.type === "app").map(i => i.data as App);
 
     const foldersChanged = newFolderOrder.some((f, i) => f.id !== folders[i]?.id);
     const appsChanged = newAppOrder.some((a, i) => a.id !== appsNotInFolder[i]?.id);
@@ -273,10 +271,9 @@ const Index = () => {
         ) : isAdmin ? (
           <DndContext
             sensors={sensors}
-            collisionDetection={pointerWithin}
+            collisionDetection={closestCenter}
             measuring={measuringConfig}
             onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
           >
             <SortableContext items={sortableIds} strategy={rectSortingStrategy}>
