@@ -31,23 +31,22 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-// Prefix helpers to distinguish folders from apps in the sortable context
+// Unified grid item
+type GridItem =
+  | { type: "folder"; data: Folder; sortableId: string }
+  | { type: "app"; data: App; sortableId: string };
+
 const FOLDER_PREFIX = "folder-";
 const APP_PREFIX = "app-";
-const toSortableId = (type: "folder" | "app", id: string) => `${type === "folder" ? FOLDER_PREFIX : APP_PREFIX}${id}`;
-const parseSortableId = (sortableId: string): { type: "folder" | "app"; id: string } => {
-  if (typeof sortableId === 'string' && sortableId.startsWith(FOLDER_PREFIX)) {
-    return { type: "folder", id: sortableId.slice(FOLDER_PREFIX.length) };
-  }
-  if (typeof sortableId === 'string' && sortableId.startsWith(APP_PREFIX)) {
-    return { type: "app", id: sortableId.slice(APP_PREFIX.length) };
-  }
-  // Fallback: assume app
-  return { type: "app", id: String(sortableId) };
-};
 
-// Draggable App Icon component for admin users
-const DraggableAppIcon = ({ app, index }: { app: App; index: number }) => {
+const makeSortableId = (item: GridItem) => item.sortableId;
+
+const DraggableGridItem = ({ item, index, onFolderClick, getAppsInFolder }: {
+  item: GridItem;
+  index: number;
+  onFolderClick: (folder: Folder) => void;
+  getAppsInFolder: (folderId: string) => App[];
+}) => {
   const {
     attributes,
     listeners,
@@ -56,7 +55,7 @@ const DraggableAppIcon = ({ app, index }: { app: App; index: number }) => {
     transition,
     isDragging,
   } = useSortable({
-    id: toSortableId("app", app.id),
+    id: item.sortableId,
     transition: {
       duration: 500,
       easing: 'cubic-bezier(0.18, 0.89, 0.32, 1.28)',
@@ -82,57 +81,20 @@ const DraggableAppIcon = ({ app, index }: { app: App; index: number }) => {
       {...attributes}
       {...listeners}
     >
-      <AppIcon
-        iconName={app.icon_name}
-        label={app.name}
-        href={app.href}
-        color={app.color}
-      />
-    </div>
-  );
-};
-
-// Draggable Folder Icon component for admin users
-const DraggableFolderIcon = ({ folder, apps, index, onClick }: { folder: Folder; apps: App[]; index: number; onClick: () => void }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: toSortableId("folder", folder.id),
-    transition: {
-      duration: 500,
-      easing: 'cubic-bezier(0.18, 0.89, 0.32, 1.28)',
-    },
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition: transition || 'transform 500ms cubic-bezier(0.18, 0.89, 0.32, 1.28)',
-    opacity: isDragging ? 0.3 : 1,
-    zIndex: isDragging ? 0 : 1,
-    scale: isDragging ? '0.95' : '1',
-    willChange: 'transform, opacity, scale',
-    animationDelay: `${index * 0.05}s`,
-    animationFillMode: 'both' as const,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={`animate-fade-in ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-      {...attributes}
-      {...listeners}
-    >
-      <FolderIcon
-        folder={folder}
-        apps={apps}
-        onClick={onClick}
-      />
+      {item.type === "app" ? (
+        <AppIcon
+          iconName={item.data.icon_name}
+          label={item.data.name}
+          href={item.data.href}
+          color={item.data.color}
+        />
+      ) : (
+        <FolderIcon
+          folder={item.data}
+          apps={getAppsInFolder(item.data.id)}
+          onClick={() => onFolderClick(item.data)}
+        />
+      )}
     </div>
   );
 };
@@ -142,139 +104,95 @@ const Index = () => {
   const { folders, reorderFolders } = useFolders();
   const { isAdmin } = useIsAdmin();
   const columns = useResponsiveColumns();
-  const [activeItem, setActiveItem] = useState<{ type: "app" | "folder"; data: App | Folder } | null>(null);
-  const [localApps, setLocalApps] = useState<App[]>(apps);
-  const [localFolders, setLocalFolders] = useState<Folder[]>(folders);
+  const [activeItem, setActiveItem] = useState<GridItem | null>(null);
   const [isMutating, setIsMutating] = useState(false);
   const isProcessingDrag = useRef(false);
   const [openFolder, setOpenFolder] = useState<Folder | null>(null);
 
-  // Filter apps not in any folder
   const appsNotInFolder = useMemo(() => apps.filter(app => !app.folder_id), [apps]);
-  const localAppsNotInFolder = useMemo(() => localApps.filter(app => !app.folder_id), [localApps]);
 
-  // Get apps inside a specific folder
   const getAppsInFolder = useCallback((folderId: string) => {
     return apps
       .filter(app => app.folder_id === folderId)
       .sort((a, b) => a.position_in_folder - b.position_in_folder);
   }, [apps]);
 
-  // Build the unified sortable items list: folders first, then apps
-  const sortableItems = useMemo(() => [
-    ...localFolders.map(f => toSortableId("folder", f.id)),
-    ...localAppsNotInFolder.map(a => toSortableId("app", a.id)),
-  ], [localFolders, localAppsNotInFolder]);
+  // Build unified grid items from server data
+  const serverGridItems = useMemo((): GridItem[] => [
+    ...folders.map(f => ({ type: "folder" as const, data: f, sortableId: `${FOLDER_PREFIX}${f.id}` })),
+    ...appsNotInFolder.map(a => ({ type: "app" as const, data: a, sortableId: `${APP_PREFIX}${a.id}` })),
+  ], [folders, appsNotInFolder]);
 
-  // Sync local state with server
-  const serverAppsHash = useMemo(() =>
-    JSON.stringify(apps.map(app => ({ id: app.id, color: app.color, name: app.name, icon_name: app.icon_name, href: app.href }))),
-    [apps]
-  );
-  const serverFoldersHash = useMemo(() =>
-    JSON.stringify(folders.map(f => ({ id: f.id, name: f.name, color: f.color }))),
-    [folders]
-  );
+  const [localItems, setLocalItems] = useState<GridItem[]>(serverGridItems);
 
+  // Sync local items with server when not dragging
   useEffect(() => {
     if (!activeItem && !isMutating) {
-      const localHash = JSON.stringify(localApps.map(app => ({ id: app.id, color: app.color, name: app.name, icon_name: app.icon_name, href: app.href })));
-      if (localHash !== serverAppsHash || localApps.length !== apps.length) {
-        setLocalApps(apps);
+      const localIds = localItems.map(i => i.sortableId).join(",");
+      const serverIds = serverGridItems.map(i => i.sortableId).join(",");
+      if (localIds !== serverIds || localItems.length !== serverGridItems.length) {
+        setLocalItems(serverGridItems);
       }
     }
-  }, [apps, activeItem, localApps, isMutating, serverAppsHash]);
+  }, [serverGridItems, activeItem, isMutating, localItems]);
 
-  useEffect(() => {
-    if (!activeItem && !isMutating) {
-      const localHash = JSON.stringify(localFolders.map(f => ({ id: f.id, name: f.name, color: f.color })));
-      if (localHash !== serverFoldersHash || localFolders.length !== folders.length) {
-        setLocalFolders(folders);
-      }
-    }
-  }, [folders, activeItem, localFolders, isMutating, serverFoldersHash]);
+  const sortableIds = useMemo(() => localItems.map(makeSortableId), [localItems]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
   const handleDragStart = (event: DragStartEvent) => {
-    const parsed = parseSortableId(String(event.active.id));
-    if (parsed.type === "app") {
-      const app = apps.find(a => a.id === parsed.id);
-      if (app) setActiveItem({ type: "app", data: app });
-    } else {
-      const folder = folders.find(f => f.id === parsed.id);
-      if (folder) setActiveItem({ type: "folder", data: folder });
-    }
+    const item = localItems.find(i => i.sortableId === String(event.active.id));
+    if (item) setActiveItem(item);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const activeParsed = parseSortableId(String(active.id));
-    const overParsed = parseSortableId(String(over.id));
-
-    // Only allow reordering within the same type
-    if (activeParsed.type !== overParsed.type) return;
-
-    if (activeParsed.type === "folder") {
-      setLocalFolders(items => {
-        const oldIndex = items.findIndex(f => f.id === activeParsed.id);
-        const newIndex = items.findIndex(f => f.id === overParsed.id);
-        if (oldIndex === -1 || newIndex === -1) return items;
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    } else {
-      setLocalApps(items => {
-        const oldIndex = items.findIndex(a => a.id === activeParsed.id);
-        const newIndex = items.findIndex(a => a.id === overParsed.id);
-        if (oldIndex === -1 || newIndex === -1) return items;
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
+    setLocalItems(items => {
+      const oldIndex = items.findIndex(i => i.sortableId === String(active.id));
+      const newIndex = items.findIndex(i => i.sortableId === String(over.id));
+      if (oldIndex === -1 || newIndex === -1) return items;
+      return arrayMove(items, oldIndex, newIndex);
+    });
   };
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { over } = event;
+  const handleDragEnd = async (_event: DragEndEvent) => {
     if (isProcessingDrag.current) return;
 
-    const activeParsed = activeItem;
-    if (!activeParsed || !over) {
+    if (!activeItem) {
       setActiveItem(null);
       return;
     }
 
     isProcessingDrag.current = true;
 
-    if (activeParsed.type === "folder") {
-      const hasChanged = localFolders.some((f, i) => f.id !== folders[i]?.id);
-      if (hasChanged) {
-        try {
-          setIsMutating(true);
-          await reorderFolders(localFolders);
-        } catch (error) {
-          console.error("❌ Errore nel riordinare le cartelle:", error);
-          setLocalFolders(folders);
-        }
+    // Extract new folder order and app order from unified list
+    const newFolderOrder = localItems.filter(i => i.type === "folder").map(i => i.data as Folder);
+    const newAppOrder = localItems.filter(i => i.type === "app").map(i => i.data as App);
+
+    const foldersChanged = newFolderOrder.some((f, i) => f.id !== folders[i]?.id);
+    const appsChanged = newAppOrder.some((a, i) => a.id !== appsNotInFolder[i]?.id);
+
+    try {
+      setIsMutating(true);
+
+      if (foldersChanged) {
+        await reorderFolders(newFolderOrder);
       }
-    } else {
-      const hasChanged = localApps.some((a, i) => a.id !== apps[i]?.id);
-      if (hasChanged) {
-        try {
-          setIsMutating(true);
-          await reorderApps(localApps);
-        } catch (error) {
-          console.error("❌ Errore nel riordinare le app:", error);
-          setLocalApps(apps);
-        }
+
+      if (appsChanged) {
+        // Reconstruct full apps list: reordered non-folder apps + apps in folders (unchanged)
+        const appsInFolders = apps.filter(a => a.folder_id);
+        const fullApps = [...newAppOrder, ...appsInFolders];
+        await reorderApps(fullApps);
       }
+    } catch (error) {
+      console.error("❌ Errore nel riordinamento:", error);
+      setLocalItems(serverGridItems);
     }
 
     setTimeout(() => {
@@ -361,22 +279,19 @@ const Index = () => {
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
           >
-            <SortableContext items={sortableItems} strategy={rectSortingStrategy}>
+            <SortableContext items={sortableIds} strategy={rectSortingStrategy}>
               <div
                 className="grid gap-4 md:gap-8 lg:gap-12 animate-scale-in"
                 style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
               >
-                {localFolders.map((folder, index) => (
-                  <DraggableFolderIcon
-                    key={folder.id}
-                    folder={folder}
-                    apps={getAppsInFolder(folder.id)}
+                {localItems.map((item, index) => (
+                  <DraggableGridItem
+                    key={item.sortableId}
+                    item={item}
                     index={index}
-                    onClick={() => setOpenFolder(folder)}
+                    onFolderClick={setOpenFolder}
+                    getAppsInFolder={getAppsInFolder}
                   />
-                ))}
-                {localAppsNotInFolder.map((app, index) => (
-                  <DraggableAppIcon key={app.id} app={app} index={localFolders.length + index} />
                 ))}
               </div>
             </SortableContext>
