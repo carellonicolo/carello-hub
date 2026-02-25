@@ -37,7 +37,7 @@ type FolderFormValues = z.infer<typeof folderSchema>;
 interface FolderFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: FolderFormData, selectedAppIds: string[]) => void;
+  onSubmit: (data: FolderFormData, selectedAppIds: string[]) => Promise<void>;
   editingFolder?: Folder | null;
   apps: App[];
   appsInFolder: string[];
@@ -79,13 +79,17 @@ export const FolderFormDialog = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, editingFolder?.id]);
 
-  const handleSubmit = (data: FolderFormValues) => {
-    onSubmit(
-      { name: data.name, color: data.color },
-      data.selectedApps
-    );
-    form.reset();
-    onOpenChange(false);
+  const handleSubmit = async (data: FolderFormValues) => {
+    try {
+      await onSubmit(
+        { name: data.name, color: data.color },
+        data.selectedApps
+      );
+      form.reset();
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Errore durante il salvataggio della cartella:', error);
+    }
   };
 
   return (

@@ -140,28 +140,42 @@ export const useApps = () => {
 
   const moveAppsToFolderMutation = useMutation({
     mutationFn: async ({ appIds, folderId }: { appIds: string[]; folderId: string | null }) => {
+      console.log('📁 moveAppsToFolder chiamata - folderId:', folderId, 'appIds:', appIds);
+      
       // First, remove all apps from this folder
       if (folderId) {
         const { error: clearError } = await supabase
           .from("apps")
           .update({ folder_id: null, position_in_folder: 0 })
           .eq("folder_id", folderId);
-        if (clearError) throw clearError;
+        if (clearError) {
+          console.error('❌ Errore clear apps:', clearError);
+          throw clearError;
+        }
+        console.log('✅ Apps rimosse dalla cartella');
       }
 
       // Then, add selected apps to the folder
       for (let i = 0; i < appIds.length; i++) {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("apps")
           .update({ folder_id: folderId, position_in_folder: i })
-          .eq("id", appIds[i]);
-        if (error) throw error;
+          .eq("id", appIds[i])
+          .select();
+        if (error) {
+          console.error(`❌ Errore assegnazione app ${appIds[i]}:`, error);
+          throw error;
+        }
+        console.log(`✅ App ${appIds[i]} assegnata a cartella, risultato:`, data);
       }
     },
     onSuccess: () => {
+      console.log('🔄 Invalidating apps and folders queries');
       queryClient.invalidateQueries({ queryKey: ["apps"] });
+      queryClient.invalidateQueries({ queryKey: ["folders"] });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('❌ moveAppsToFolder errore:', error);
       toast({ title: "Errore durante l'aggiornamento", variant: "destructive" });
     },
   });
