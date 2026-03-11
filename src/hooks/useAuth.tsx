@@ -1,3 +1,18 @@
+/**
+ * Hook di Autenticazione - Gestione sessione utente.
+ *
+ * Fornisce un Context React con lo stato dell'autenticazione (user, session)
+ * e le funzioni signIn/signOut. Avvolge l'intera app tramite <AuthProvider>.
+ *
+ * Flusso:
+ * 1. Al mount, registra un listener su onAuthStateChange per aggiornamenti real-time
+ * 2. Controlla se esiste una sessione salvata in localStorage
+ * 3. signIn autentica con email/password via Supabase Auth
+ * 4. signOut cancella la sessione e il token JWT
+ *
+ * Dopo il login, l'utente viene reindirizzato alla homepage.
+ * I messaggi di errore sono tradotti in italiano per l'interfaccia.
+ */
 import { createContext, useContext, useEffect, useState } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,6 +35,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
+/** Hook per accedere allo stato di autenticazione da qualsiasi componente */
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -29,19 +45,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up auth state listener
+    // Listener real-time: si attiva a ogni cambio di stato auth (login, logout, refresh token)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (event === "SIGNED_IN") {
           navigate("/");
         }
       }
     );
 
-    // Check for existing session
+    // Recupera la sessione esistente dal localStorage al primo caricamento
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -51,19 +67,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  /** Autentica l'utente con email e password */
   const signIn = async (email: string, password: string) => {
     try {
-      // Validate email
-      if (!email) {
-        throw new Error("L'email è obbligatoria");
-      }
+      if (!email) throw new Error("L'email è obbligatoria");
+      if (!password) throw new Error("La password è obbligatoria");
 
-      // Validate password
-      if (!password) {
-        throw new Error("La password è obbligatoria");
-      }
-
-      // Attempt sign in
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -73,11 +82,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (error.message.includes("Invalid login credentials")) {
           throw new Error("Credenziali non valide");
         }
-        
         if (error.message.includes("Email not confirmed")) {
           throw new Error("Email non confermata. Controlla la tua casella di posta.");
         }
-        
         throw new Error(error.message || "Errore durante l'accesso");
       }
 
@@ -95,11 +102,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  /** Disconnette l'utente e cancella la sessione */
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-
       toast({ title: "Disconnesso con successo" });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Si è verificato un errore durante la disconnessione";

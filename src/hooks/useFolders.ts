@@ -107,7 +107,6 @@ export const useFolders = () => {
       if (context?.previousFolders) {
         queryClient.setQueryData(["folders"], context.previousFolders);
       }
-      console.error("Errore durante il riordinamento:", error);
       toast({
         title: "Errore durante il riordinamento",
         variant: "destructive"
