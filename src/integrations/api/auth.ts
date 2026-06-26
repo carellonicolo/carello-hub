@@ -68,7 +68,7 @@ export const auth = {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: credentials.password }),
+        body: JSON.stringify({ email: credentials.email, password: credentials.password }),
         credentials: "include",
       });
       const body = (await res.json()) as { data?: { user: SessionUser } | null; error?: { message: string } | null };

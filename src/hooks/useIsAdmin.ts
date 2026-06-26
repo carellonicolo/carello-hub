@@ -13,7 +13,7 @@
  */
 import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/api/client";
 
 export const useIsAdmin = () => {
   const { user } = useAuth();

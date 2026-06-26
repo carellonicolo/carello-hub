@@ -14,8 +14,8 @@
  * I messaggi di errore sono tradotti in italiano per l'interfaccia.
  */
 import { createContext, useContext, useEffect, useState } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import type { SessionUser as User, Session } from "@/integrations/api/auth";
+import { supabase } from "@/integrations/api/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 

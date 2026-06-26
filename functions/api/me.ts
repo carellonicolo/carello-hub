@@ -4,12 +4,16 @@
  */
 import type { AuthData } from "./_middleware";
 
+interface Env {
+  ADMIN_EMAIL?: string;
+}
+
 export const onRequestGet: PagesFunction<Env, string, AuthData> = async (context) => {
   if (!context.data.isAdmin) {
     return Response.json({ data: null, error: null });
   }
   return Response.json({
-    data: { user: { id: "admin", email: "admin" } },
+    data: { user: { id: "admin", email: context.env.ADMIN_EMAIL ?? "admin" } },
     error: null,
   });
 };

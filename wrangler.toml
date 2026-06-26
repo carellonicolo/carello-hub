@@ -12,6 +12,12 @@ name = "carello-hub"
 compatibility_date = "2025-01-01"
 pages_build_output_dir = "dist"
 
+# Email dell'unico admin abilitato al login. Non è un segreto (la password lo è):
+# il login richiede email + password corrispondenti. Tenuta qui per essere
+# versionata e applicata automaticamente al deploy su Pages.
+[vars]
+ADMIN_EMAIL = "info@nicolocarello.it"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "prof-carello"
