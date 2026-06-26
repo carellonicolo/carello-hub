@@ -1,0 +1,18 @@
+# Configurazione Cloudflare Pages per carello-hub.
+#
+# carello-hub è un launcher PUBBLICO: la dashboard (apps/folders) è leggibile
+# da chiunque, mentre le modifiche sono riservate all'admin. L'autenticazione
+# admin è gestita interamente dal Worker (password + cookie di sessione firmato),
+# quindi NON usiamo Cloudflare Access (che proteggerebbe l'intero dominio).
+#
+# Il database è il D1 condiviso "prof-carello": qui vivono anche le tabelle
+# apps/folders di questo hub (vedi migrations/).
+
+name = "carello-hub"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "prof-carello"
+database_id = "73f3dcfb-b219-406f-92b4-39ecd3953e7d"

@@ -17,6 +17,10 @@ bun.lock
 .env
 .env.local
 .env.production
+.dev.vars
+
+# Cloudflare Wrangler local state
+.wrangler
 
 # Editor directories and files
 .vscode/*
