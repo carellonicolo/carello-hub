@@ -32,3 +32,6 @@ bun.lock
 *.njsproj
 *.sln
 *.sw?
+
+# Backup di migrazione (non sensibili, ma fuori dal repo)
+carello_hub_supabase_backup.sql
