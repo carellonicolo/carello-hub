@@ -56,6 +56,26 @@ interface QuerySpec {
 class BadRequest extends Error {}
 class Forbidden extends Error {}
 
+// CORS — consente la LETTURA cross-origin dai sottodomini del Prof. Carello
+// (es. ccna1.nicolocarello.it) verso questo Hub. La fetch del launcher è senza
+// credentials, quindi NON serve Allow-Credentials e l'allowlist resta ai soli
+// domini nicolocarello.(it|eu). Le scritture restano protette dal cookie admin.
+const CORS_ALLOWED = /^https:\/\/([a-z0-9-]+\.)?nicolocarello\.(it|eu)$/i;
+function corsHeaders(origin: string | null): Record<string, string> {
+  return origin && CORS_ALLOWED.test(origin)
+    ? {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Vary": "Origin",
+      }
+    : {};
+}
+
+// Preflight CORS: il browser invia OPTIONS prima della POST cross-origin.
+export const onRequestOptions: PagesFunction<Env> = async (context) =>
+  new Response(null, { headers: corsHeaders(context.request.headers.get("Origin")) });
+
 function assertTable(table: string): string[] {
   const cols = SCHEMA[table];
   if (!cols) throw new BadRequest(`Tabella non ammessa: ${table}`);
@@ -188,6 +208,7 @@ async function handleDelete(env: Env, spec: QuerySpec) {
 }
 
 export const onRequestPost: PagesFunction<Env, string, AuthData> = async (context) => {
+  const cors = corsHeaders(context.request.headers.get("Origin"));
   try {
     const spec = (await context.request.json()) as QuerySpec;
 
@@ -204,10 +225,10 @@ export const onRequestPost: PagesFunction<Env, string, AuthData> = async (contex
       case "delete": result = await handleDelete(context.env, spec); break;
       default: throw new BadRequest(`Azione non ammessa: ${(spec as QuerySpec).action}`);
     }
-    return Response.json(result);
+    return Response.json(result, { headers: cors });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Errore sconosciuto";
     const status = err instanceof Forbidden ? 403 : err instanceof BadRequest ? 400 : 500;
-    return Response.json({ data: null, count: null, error: { message } }, { status });
+    return Response.json({ data: null, count: null, error: { message } }, { status, headers: cors });
   }
 };
